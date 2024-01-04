@@ -26,4 +26,8 @@ What algorithms and /or data structures you will be using, and how.
     
 # Intended pacing:
 
-A timeline with expected completion dates of parts of the project.
+Implement a server that can handle multiples clients - 1/5/23
+Implement a client application that connects to the server - 1/8/23
+Implement the core game logic server side - 1/10/23
+Implement the timer mechanism - 1/12/23
+Thorough testing and bug-fixing/Maybe implement networking - 1/16/23
