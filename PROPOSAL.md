@@ -6,12 +6,11 @@ Arslan Ayushin, Dean Kaushal
        
 # Intentions:
 
-A statement of the problem you are solving and/or a high level description of the project.
 We are making a multiplayer text-based game inspired by Word Bomb. The server generates 1-3 letters. Players take turns entering a word that must contain the letters provided. If they do not enter a unique word within the time limit they are out of the game. Last person standing wins the game.
 
 # Intended usage:
 
-A description as to how the project will be used (describe the user interface).
+The game will be played on one computer with multiple terminals open. The server will generate 3 random letters that the clients can see. The 3 letters will stay the same for the whole game. There will be a timer that will incremently get slower each round. One round will include each client having a turn to type a word that contains the 3 letters in any order. If they fail to produce a unique word before the timer runs out, then they are out and will not have a turn in the next round. Once there is only one person that has a turn remaining, they win the game and the program ends. 
   
 # Technical Details:
 
