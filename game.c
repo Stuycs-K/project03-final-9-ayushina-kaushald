@@ -6,8 +6,14 @@
 char *generateLetter() {
     char *result = malloc(2);
     result[0] = 'a' + rand() % 26;
+    return result;
+}
+
+int checkWord(char *word) {
+    return 0;
 }
 
 int main() {
     srand(time(NULL));
+    printf("%s\n", generateLetter());
 }
