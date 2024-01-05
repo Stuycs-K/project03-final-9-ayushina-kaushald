@@ -14,7 +14,10 @@ Expanded description including how much time was spent on task.
 Expanded description including how much time was spent on task.
 
 ### 2024-01-03 - Brief description
-Expanded description including how much time was spent on task.
+Discussed project ideas and created project proposal(30 minutes)
+Wrote the intended usage portion of the proposal(10 minutes)
+Wrote the intended pacing portion of the proposal(10 minutes)
+
 
 ### 2024-01-04 - Brief description
 Finalized project design with Arslan in class(10 minutes)
