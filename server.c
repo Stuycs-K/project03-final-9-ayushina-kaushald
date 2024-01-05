@@ -9,6 +9,13 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+void err(int i, char*message){
+    if(i < 0){
+        printf("Error: %s - %s\n",message, strerror(errno));
+        exit(1);
+    }
+}
+
 int main(){
     struct addrinfo * hints, * results;
     hints = calloc(1,sizeof(struct addrinfo));
