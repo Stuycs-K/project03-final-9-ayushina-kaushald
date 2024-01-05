@@ -45,9 +45,9 @@ int main(){
 
     fd_set read_fds;
 
-    char buff[1025]="";
-
     while(1){
+
+        char buff[1025]="";
 
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
@@ -70,10 +70,10 @@ int main(){
             //read the whole buff
             read(client_socket,buff, sizeof(buff));
             //trim the string
-            buff[strlen(buff)-1]=0; //clear newline
-            if(buff[strlen(buff)-1]==13){
+            buff[strlen(buff)]=0; //clear newline
+            if(buff[strlen(buff)]==13){
                 //clear windows line ending
-                buff[strlen(buff)-1]=0;
+                buff[strlen(buff)]=0;
             }
 
             printf("\nRecieved from client '%s'\n",buff);
