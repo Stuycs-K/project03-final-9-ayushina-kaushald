@@ -8,6 +8,7 @@
 #define WORDS_H
 #define FILE_NAME "words"
 #define BUFFER_SIZE 1024
+void file_setup();
 void add_word(char *word);
 int find_word(char *word);
 #endif
