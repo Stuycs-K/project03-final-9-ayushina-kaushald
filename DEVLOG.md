@@ -1,12 +1,18 @@
 # Dev Log:
 
-## Player 1
+## Arslan Ayushin
 
 ### 2024-01-02 - Brief description
 Expanded description including how much time was spent on task.
 
-### 2024-01-03 - Brief description
-Expanded description including how much time was spent on task.
+### 2024-01-03 - Proposal
+Came up with ideas, started the intentions section of the proposal in class (30 mins)
+Added the topics covered, algorithms/data structures part of the proposal (30 mins)
+
+### 2024-01-04 - Game functions
+Worked with Dean in class on the server/client code (20 mins)
+Wrote function to give server random letter (10 mins)
+Added words.c and functions to write words to a file and check if a word is in file (30 mins)
 
 ## Dean Kaushal
 
