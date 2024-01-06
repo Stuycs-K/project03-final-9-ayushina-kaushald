@@ -17,6 +17,8 @@ Added words.c and functions to write words to a file and check if a word is in f
 ### 2024-01-05 - Brief description
 Added makefile for server/client
 Tested server/client, fixed reading socket cutting off last character and loop (30 mins)
+Added queue.c and .h to start implementing queue for the players (15 min)
+Create queue (15 min)
 
 ## Dean Kaushal
 
