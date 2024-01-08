@@ -37,18 +37,14 @@ int main() {
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
             buff[strlen(buff) - 1] = '\0';
-            send(client_socket, buff, strlen(buff), 0);
+            int wbytes = write(client_socket, buff, strlen(buff));
         }
 
         if (FD_ISSET(client_socket, &read_fds)) {
-            ssize_t bytes_received = recv(client_socket, buff, sizeof(buff) - 1, 0);
+            ssize_t bytes_received = read(client_socket, buff, sizeof(buff));
             if (bytes_received > 0) {
                 buff[bytes_received] = '\0';
                 printf("Received from server: '%s'", buff);
-            }
-            else {
-                printf("Server closed connection.");
-                break;
             }
         }
     }
