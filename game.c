@@ -9,11 +9,17 @@ char *generateLetter() {
     return result;
 }
 
-int checkWord(char *word) {
+int checkWord(char *word, char letter) {
+    if(word[0] == letter){
+        return 1;
+    } 
     return 0;
 }
 
 int main() {
     srand(time(NULL));
     printf("%s\n", generateLetter());
+    if(checkWord("hello", 'c')){
+        printf("working");
+    }
 }
