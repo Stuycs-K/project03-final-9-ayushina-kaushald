@@ -57,7 +57,7 @@ int main(){
         //if standard in, use fgets
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
-            buff[strlen(buff)-1]=0;
+            buff[strlen(buff)]=0;
             printf("Recieved from terminal: '%s'\n",buff);
         }
 
