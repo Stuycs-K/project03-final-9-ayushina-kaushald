@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "queue.h"
 
 void err(int i, char*message){
     if(i < 0){
@@ -51,6 +52,8 @@ int main(){
     sock_size = sizeof(client_address);
 
     fd_set read_fds;
+
+    struct queue *plr_queue = create_queue(10); //max capacity
 
     while(1){
 
