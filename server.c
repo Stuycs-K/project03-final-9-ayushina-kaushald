@@ -74,17 +74,25 @@ int main(){
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
             printf("Connected, waiting for data.\n");
 
-            //read the whole buff
-            read(client_socket,buff, sizeof(buff));
-            //trim the string
-            buff[strlen(buff)]=0; //clear newline
-            if(buff[strlen(buff)]==13){
-                //clear windows line ending
-                buff[strlen(buff)]=0;
-            }
+            int f = fork();
+            if (f == 0) {
+                while (1) {
+                    //read the whole buff
+                    int rbytes = read(client_socket,buff, sizeof(buff));
+                    if (rbytes == 0) {
+                        break;
+                    }
+                    //trim the string
+                    buff[strlen(buff)]=0; //clear newline
+                    if(buff[strlen(buff)]==13){
+                        //clear windows line ending
+                        buff[strlen(buff)]=0;
+                    }
 
-            printf("\nRecieved from client '%s'\n",buff);
-            close(client_socket);
+                    printf("\nRecieved from client '%s'\n",buff);
+                }
+            }
+            //close(client_socket);
         }
     }
 
