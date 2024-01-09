@@ -34,6 +34,11 @@ int main() {
 
         int i = select(client_socket + 1, &read_fds, NULL, NULL, NULL);
 
+        if (i == -1) {
+            perror("Error in select");
+            break;
+        }
+
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
             buff[strlen(buff) - 1] = '\0';
@@ -41,11 +46,19 @@ int main() {
         }
 
         if (FD_ISSET(client_socket, &read_fds)) {
-            ssize_t bytes_received = read(client_socket, buff, sizeof(buff));
-            if (bytes_received > 0) {
-                buff[bytes_received] = '\0';
-                printf("Received from server: '%s'", buff);
+            ssize_t bytes_received = recv(client_socket, buff, sizeof(buff) - 1, 0);
+
+            if (bytes_received <= 0) {
+                if (bytes_received == 0) {
+                    printf("Server closed connection.\n");
+                } else {
+                    perror("Error receiving data from server");
+                }
+                break;
             }
+
+            buff[bytes_received] = '\0';
+            printf("Received from server: '%s'\n", buff);
         }
     }
 
