@@ -34,3 +34,6 @@ Wrote the intended pacing portion of the proposal(10 minutes)
 Finalized project design with Arslan in class(10 minutes)
 Copied server demo code with the select function and learned how to utilize its features(20 minutes)
 Used the server demo code to create the client side. it is not completed and i need to figure out some things(30 minutes)
+
+### 2024-01-05 - Brief description
+Continued to work on client/server communications, unable to get it working(1 hour)
