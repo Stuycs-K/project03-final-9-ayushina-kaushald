@@ -42,7 +42,7 @@ int main(){
     int berr = bind(listen_socket, results->ai_addr, results->ai_addrlen);
     err(berr, "Error binding");
     listen(listen_socket, 3);//3 clients can wait to be processed
-    printf("Listening on port %s\n",PORT);
+    printf("Player x turn(x remaining players) %s\n",PORT);
 
     socklen_t sock_size;
     struct sockaddr_storage client_address;
