@@ -64,6 +64,11 @@ int main(){
         FD_SET(listen_socket,&read_fds);
         int i = select(listen_socket+1, &read_fds, NULL, NULL, NULL);
 
+        // if(players > 1){
+        //     printf("Game starting!\n");
+        // }
+        // printf("here");
+
         //if standard in, use fgets
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
@@ -82,6 +87,7 @@ int main(){
             print_queue(plr_queue);
             playerList[players] = client_socket;
             players++;
+            printf("Player %d has joined the game(%d current players)\n", client_socket, players);
             int f = fork();
             if (f == 0) {
                 while (1) {
@@ -100,6 +106,10 @@ int main(){
                     printf("\nRecieved from client '%s'\n",buff);
                 }
             }
+            // if(players > 1){
+            //     printf("Game starting!\n");
+            // }
+            // printf("here");
             //close(client_socket);
         }
     }
