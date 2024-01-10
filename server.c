@@ -85,6 +85,10 @@ int main(){
 
             printf("\nPlayer x response '%s'\n",buff);
             close(client_socket);
+
+            // if(!(checkWord(player response, generated letter))){
+            //     remove player from queue
+            // }
         }
     }
 
