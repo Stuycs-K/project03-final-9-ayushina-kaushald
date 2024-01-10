@@ -18,11 +18,11 @@ int main() {
     int client_socket = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
 
     if (connect(client_socket, results->ai_addr, results->ai_addrlen) == -1) {
-        perror("Error connecting to the server");
+        perror("Unable to connect to game");
         exit(EXIT_FAILURE);
     }
 
-    printf("Connected to server.\n");
+    printf("Welcome to Word Bomb!\n");
 
     fd_set read_fds;
     char buff[1025] = "";

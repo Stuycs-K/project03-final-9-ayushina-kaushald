@@ -42,8 +42,11 @@ int main(){
     int berr = bind(listen_socket, results->ai_addr, results->ai_addrlen);
     err(berr, "Error binding");
     listen(listen_socket, 3);//3 clients can wait to be processed
-    printf("Listening on port %s\n",PORT);
+    printf("Player x turn(x remaining players)\n");
 
+    int* playerList = calloc(20, sizeof(int));
+    int players = 0;
+    
     socklen_t sock_size;
     struct sockaddr_storage client_address;
     sock_size = sizeof(client_address);
@@ -61,6 +64,11 @@ int main(){
         FD_SET(listen_socket,&read_fds);
         int i = select(listen_socket+1, &read_fds, NULL, NULL, NULL);
 
+        // if(players > 1){
+        //     printf("Game starting!\n");
+        // }
+        // printf("here");
+
         //if standard in, use fgets
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
@@ -77,7 +85,9 @@ int main(){
             printf("%d\n", client_socket);
             enqueue(plr_queue, client_socket);
             print_queue(plr_queue);
-
+            playerList[players] = client_socket;
+            players++;
+            printf("Player %d has joined the game(%d current players)\n", client_socket, players);
             int f = fork();
             if (f == 0) {
                 while (1) {
@@ -96,6 +106,10 @@ int main(){
                     printf("\nRecieved from client '%s'\n",buff);
                 }
             }
+            // if(players > 1){
+            //     printf("Game starting!\n");
+            // }
+            // printf("here");
             //close(client_socket);
         }
     }
