@@ -39,11 +39,8 @@ int main(){
         exit(-1);
     }
 
-    int err = bind(listen_socket, results->ai_addr, results->ai_addrlen);
-    if(err == -1){
-        printf("Error binding: %s",strerror(errno));
-        exit(1);
-    }
+    int berr = bind(listen_socket, results->ai_addr, results->ai_addrlen);
+    err(berr, "Error binding");
     listen(listen_socket, 3);//3 clients can wait to be processed
     printf("Listening on port %s\n",PORT);
 
@@ -53,7 +50,7 @@ int main(){
 
     fd_set read_fds;
 
-    struct queue *plr_queue = create_queue(10); //max capacity
+    struct queue *plr_queue = create_queue(20); //max capacity
 
     while(1){
 
@@ -76,6 +73,10 @@ int main(){
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
             printf("Connected, waiting for data.\n");
+            err(client_socket, "server accept error");
+            printf("%d\n", client_socket);
+            enqueue(plr_queue, client_socket);
+            print_queue(plr_queue);
 
             int f = fork();
             if (f == 0) {

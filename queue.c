@@ -23,10 +23,19 @@ int dequeue(struct queue *q) {
     return elem;
 }
 
-int main() {
-    struct queue *q = create_queue(20);
-    enqueue(q, 30);
-    enqueue(q, 40);
-    printf("%d\n", dequeue(q));
-    printf("%d\n", dequeue(q));
+void print_queue(struct queue *q) {
+    printf("[");
+    for (int i = 0; i < q->size; i++) {
+        int index = (q->front + i) % q->capacity;
+        printf(" %d ", q->arr[index]);
+    }
+    printf("]\n");
 }
+
+// int main() {
+//     struct queue *q = create_queue(20);
+//     enqueue(q, 30);
+//     enqueue(q, 40);
+//     printf("%d\n", dequeue(q));
+//     printf("%d\n", dequeue(q));
+// }

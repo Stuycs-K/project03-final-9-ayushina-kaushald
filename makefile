@@ -1,4 +1,4 @@
-compile: client.o server.o
+compile: client.o server.o queue.o
 	@gcc -o client client.o queue.o
 	@gcc -o server server.o queue.o
 
