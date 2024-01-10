@@ -37,3 +37,8 @@ Used the server demo code to create the client side. it is not completed and i n
 
 ### 2024-01-05 - Brief description
 Continued to work on client/server communications, unable to get it working(1 hour)
+
+### 2024-01-08 - Brief description
+Worked with Arslan to finalize server/client communications working(30 min)
+Started working on game logic functions(completed the checkWord method and started others)(30 min)
+
