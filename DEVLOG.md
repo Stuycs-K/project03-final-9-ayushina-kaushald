@@ -20,10 +20,14 @@ Tested server/client, fixed reading socket cutting off last character and loop (
 Added queue.c and .h to start implementing queue for the players (15 min)
 Create queue (15 min)
 
+### 2024-01-08 - Brief description
+Tried to fix client error with bytes received = 0, changed send/recv (30 mins)
+Add fork to server, can now accept multiple clients(30 mins)
+
 ### 2024-01-09 - Brief description
-Create player queue in the server, fix makefile and server.c in class (30 mins)
-Finished enqueue/dequeue(10 mins)
-Server adds clients to queue and print queue(20 mins)
+Create player queue in the server, fix makefile and server.c (30 mins)
+Finished enqueue/dequeue functions (10 mins)
+Server adds clients to queue and prints queue(20 mins)
 
 ## Dean Kaushal
 
