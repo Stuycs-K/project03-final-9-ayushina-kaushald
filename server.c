@@ -42,8 +42,11 @@ int main(){
     int berr = bind(listen_socket, results->ai_addr, results->ai_addrlen);
     err(berr, "Error binding");
     listen(listen_socket, 3);//3 clients can wait to be processed
-    printf("Player x turn(x remaining players) %s\n",PORT);
+    printf("Player x turn(x remaining players)\n");
 
+    int* playerList = calloc(20, sizeof(int));
+    int players = 0;
+    
     socklen_t sock_size;
     struct sockaddr_storage client_address;
     sock_size = sizeof(client_address);
@@ -77,7 +80,8 @@ int main(){
             printf("%d\n", client_socket);
             enqueue(plr_queue, client_socket);
             print_queue(plr_queue);
-
+            playerList[players] = client_socket;
+            players++;
             int f = fork();
             if (f == 0) {
                 while (1) {
