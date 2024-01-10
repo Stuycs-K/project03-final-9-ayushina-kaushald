@@ -14,6 +14,7 @@ void enqueue(struct queue *q, int elem) {
     q->back = (q->back + 1) % q->capacity; 
     q->arr[q->back] = elem;
     q->size += 1;
+    printf("elem %d", elem);
 }
 
 int dequeue(struct queue *q) {
@@ -21,23 +22,6 @@ int dequeue(struct queue *q) {
     q->front = (q->front + 1) % q->capacity;
     q->size -= 1;
     return elem;
-}
-
-void remove_plr(struct queue *q, int elem) {
-    int i = 0;
-    int shift = 0;
-    while (i < q->size) {
-        int index = (q->front + i) % q->capacity;
-        if (q->arr[index] == elem) {
-            q->arr[index] = 0;
-            shift = 1;
-        }
-        else if (shift) {
-            q->arr[index - 1] = q->arr[index];
-            q->arr[index] = 0;
-        }
-        i++;
-    }
 }
 
 void print_queue(struct queue *q) {
