@@ -94,6 +94,7 @@ int main(){
                     //read the whole buff
                     int rbytes = read(client_socket,buff, sizeof(buff));
                     if (rbytes == 0) {
+                        printf("disconnected\n");
                         break;
                     }
                     //trim the string
