@@ -44,7 +44,7 @@ int main(){
         exit(1);
     }
     listen(listen_socket, 3);//3 clients can wait to be processed
-    printf("Listening on port %s\n",PORT);
+    printf("Player x turn(x remaining players) %s\n",PORT);
 
     socklen_t sock_size;
     struct sockaddr_storage client_address;
@@ -72,7 +72,7 @@ int main(){
         if (FD_ISSET(listen_socket, &read_fds)) {
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
-            printf("Connected, waiting for data.\n");
+            printf("Welcome to Word Bomb!\n");
 
             //read the whole buff
             read(client_socket,buff, sizeof(buff));
@@ -83,7 +83,7 @@ int main(){
                 buff[strlen(buff)]=0;
             }
 
-            printf("\nRecieved from client '%s'\n",buff);
+            printf("\nPlayer x response '%s'\n",buff);
             close(client_socket);
         }
     }
