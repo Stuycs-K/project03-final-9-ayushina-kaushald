@@ -42,7 +42,7 @@ int main() {
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
             buff[strlen(buff) - 1] = '\0';
-            send(client_socket, buff, strlen(buff), 0);
+            int wbytes = write(client_socket, buff, strlen(buff));
         }
 
         if (FD_ISSET(client_socket, &read_fds)) {

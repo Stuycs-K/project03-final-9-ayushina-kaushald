@@ -8,6 +8,7 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "queue.h"
 
 void err(int i, char*message){
     if(i < 0){
@@ -38,11 +39,8 @@ int main(){
         exit(-1);
     }
 
-    int err = bind(listen_socket, results->ai_addr, results->ai_addrlen);
-    if(err == -1){
-        printf("Error binding: %s",strerror(errno));
-        exit(1);
-    }
+    int berr = bind(listen_socket, results->ai_addr, results->ai_addrlen);
+    err(berr, "Error binding");
     listen(listen_socket, 3);//3 clients can wait to be processed
     printf("Listening on port %s\n",PORT);
 
@@ -51,6 +49,8 @@ int main(){
     sock_size = sizeof(client_address);
 
     fd_set read_fds;
+
+    struct queue *plr_queue = create_queue(20); //max capacity
 
     while(1){
 
@@ -64,7 +64,7 @@ int main(){
         //if standard in, use fgets
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
-            buff[strlen(buff)-1]=0;
+            buff[strlen(buff)]=0;
             printf("Recieved from terminal: '%s'\n",buff);
         }
 
@@ -73,18 +73,30 @@ int main(){
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
             printf("Connected, waiting for data.\n");
+            err(client_socket, "server accept error");
+            printf("%d\n", client_socket);
+            enqueue(plr_queue, client_socket);
+            print_queue(plr_queue);
 
-            //read the whole buff
-            read(client_socket,buff, sizeof(buff));
-            //trim the string
-            buff[strlen(buff)]=0; //clear newline
-            if(buff[strlen(buff)]==13){
-                //clear windows line ending
-                buff[strlen(buff)]=0;
+            int f = fork();
+            if (f == 0) {
+                while (1) {
+                    //read the whole buff
+                    int rbytes = read(client_socket,buff, sizeof(buff));
+                    if (rbytes == 0) {
+                        break;
+                    }
+                    //trim the string
+                    buff[strlen(buff)]=0; //clear newline
+                    if(buff[strlen(buff)]==13){
+                        //clear windows line ending
+                        buff[strlen(buff)]=0;
+                    }
+
+                    printf("\nRecieved from client '%s'\n",buff);
+                }
             }
-
-            printf("\nRecieved from client '%s'\n",buff);
-            close(client_socket);
+            //close(client_socket);
         }
     }
 
