@@ -84,6 +84,7 @@ int main(){
                     //read the whole buff
                     int rbytes = read(client_socket,buff, sizeof(buff));
                     if (rbytes == 0) {
+                        remove_plr(plr_queue, client_socket);
                         break;
                     }
                     //trim the string
