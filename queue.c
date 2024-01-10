@@ -24,6 +24,14 @@ int dequeue(struct queue *q) {
     return elem;
 }
 
+void remove_plr(int *arr, int elem) {
+    for (int i = 0; i < sizeof(arr)/sizeof(int); i += sizeof(int)) {
+        if (arr[i] == elem) {
+            
+        }
+    }
+}
+
 void print_queue(struct queue *q) {
     printf("[");
     for (int i = 0; i < q->size; i++) {
