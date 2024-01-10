@@ -20,6 +20,11 @@ Tested server/client, fixed reading socket cutting off last character and loop (
 Added queue.c and .h to start implementing queue for the players (15 min)
 Create queue (15 min)
 
+### 2024-01-09 - Brief description
+Create player queue in the server, fix makefile and server.c in class (30 mins)
+Finished enqueue/dequeue(10 mins)
+Server adds clients to queue and print queue(20 mins)
+
 ## Dean Kaushal
 
 ### 2024-01-02 - Brief description
