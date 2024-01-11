@@ -8,7 +8,17 @@
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <signal.h>
 #include "queue.h"
+#include "words.h"
+
+static void sighandler(int signo) {
+    if (signo == SIGINT) {
+        printf("\nInterrupted\n");
+        remove_shm();
+        exit(0);
+    }
+}
 
 void err(int i, char*message){
     if(i < 0){
@@ -18,6 +28,8 @@ void err(int i, char*message){
 }
 
 int main(){
+    signal(SIGINT, sighandler);
+
     struct addrinfo * hints, * results;
     hints = calloc(1,sizeof(struct addrinfo));
     char* PORT = "9998";
@@ -55,9 +67,11 @@ int main(){
 
     struct queue *plr_queue = create_queue(20); //max capacity
 
+    shm_setup(); //player queue shm
+
     while(1){
 
-        char buff[1025]="";
+        char *buff = malloc(BUFFER_SIZE);
 
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
@@ -73,6 +87,7 @@ int main(){
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
             buff[strlen(buff)]=0;
+            buff = strsep(&buff, "\n");
             printf("Recieved from terminal: '%s'\n",buff);
         }
 

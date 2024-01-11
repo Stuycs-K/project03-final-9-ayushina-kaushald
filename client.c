@@ -5,6 +5,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include "words.h"
 
 int main() {
     struct addrinfo *hints, *results;
@@ -25,7 +27,7 @@ int main() {
     printf("Welcome to Word Bomb!\n");
 
     fd_set read_fds;
-    char buff[1025] = "";
+    char *buff = malloc(BUFFER_SIZE);
 
     while (1) {
         FD_ZERO(&read_fds);
@@ -41,12 +43,13 @@ int main() {
 
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
-            buff[strlen(buff) - 1] = '\0';
-            int wbytes = write(client_socket, buff, strlen(buff));
+            buff[strlen(buff)] = '\0';
+            buff = strsep(&buff, "\n");
+            int wbytes = write(client_socket, buff, sizeof(buff));
         }
 
         if (FD_ISSET(client_socket, &read_fds)) {
-            ssize_t bytes_received = recv(client_socket, buff, sizeof(buff) - 1, 0);
+            ssize_t bytes_received = recv(client_socket, buff, sizeof(buff), 0);
 
             if (bytes_received <= 0) {
                 if (bytes_received == 0) {
