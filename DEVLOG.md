@@ -59,3 +59,7 @@ Started working on game logic functions(completed the checkWord method and start
 ### 2024-01-09 - Brief description
 Implemented game logic within the server/client communications(30 min)
 Continued more game logic methods including dealing with the queue of players(30 min)
+
+### 2024-01-10 - Brief description
+Created a playersList arry and player counter in the server to handle multiple players(30 min)
+Condensed game.c and words.c into one file, wrote the wordValid method to check if inputted word is acceptable(30 min)
