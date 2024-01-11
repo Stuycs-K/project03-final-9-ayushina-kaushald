@@ -56,7 +56,6 @@ int main() {
                 }
                 break;
             }
-
             buff[bytes_received] = '\0';
             printf("Received from server: '%s'\n", buff);
         }

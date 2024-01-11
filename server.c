@@ -110,7 +110,12 @@ int main(){
                         }
                         printf("\nRecieved from client '%s'\n",buff);
                         printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
-                    } 
+                    } else {
+                        char msg[1025] = "Wait your turn";
+                        write(client_socket, msg, strlen(msg));
+                        //printf("here\n");
+                    }
+
                 }
             } 
             // if(players > 1){
