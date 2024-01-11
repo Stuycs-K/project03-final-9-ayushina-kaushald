@@ -24,6 +24,10 @@ int dequeue(struct queue *q) {
     return elem;
 }
 
+int get_front(struct queue *q) {
+    return q->arr[q->front];
+}
+
 void remove_plr(int *arr, int elem) {
     for (int i = 0; i < sizeof(arr)/sizeof(int); i += sizeof(int)) {
         if (arr[i] == elem) {

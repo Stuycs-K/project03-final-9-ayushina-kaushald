@@ -97,14 +97,18 @@ int main(){
                         printf("disconnected\n");
                         break;
                     }
-                    //trim the string
-                    buff[strlen(buff)]=0; //clear newline
-                    if(buff[strlen(buff)]==13){
-                        //clear windows line ending
-                        buff[strlen(buff)]=0;
-                    }
+                    if (get_front(plr_queue) == client_socket) {
+                        dequeue(plr_queue);
+                        enqueue(plr_queue, client_socket);
+                        //trim the string
+                        buff[strlen(buff)]=0; //clear newline
+                        if(buff[strlen(buff)]==13){
+                            //clear windows line ending
+                            buff[strlen(buff)]=0;
+                        }
 
-                    printf("\nRecieved from client '%s'\n",buff);
+                        printf("\nRecieved from client '%s'\n",buff);
+                    }
                 }
             }
             // if(players > 1){
