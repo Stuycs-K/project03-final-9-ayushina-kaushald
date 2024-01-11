@@ -3,6 +3,12 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/shm.h>
+#include <sys/sem.h>
+#include <sys/ipc.h>
+#include <sys/types.h>
 
 #ifndef WORDS_H
 #define WORDS_H
@@ -12,4 +18,5 @@
 void file_setup();
 void add_word(char *word);
 int find_word(char *word);
+void shm_setup();
 #endif

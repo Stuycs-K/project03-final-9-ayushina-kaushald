@@ -31,13 +31,16 @@ void shm_setup() {
     int *data;
     int shmid;
     shmid = shmget(SHM_KEY, sizeof(int), IPC_CREAT | 0644);
+    if (shmid == -1) {
+        printf("shmget error %d: %s\n", errno, strerror(errno));
+    }
 }
 
-int main() {
-    file_setup();
-    add_word("Hello");
-    add_word("he he");
-    add_word("where");
-    printf("%d\n", find_word("Hello"));
-    printf("%d\n", find_word("bye"));
-}
+// int main() {
+//     file_setup();
+//     add_word("Hello");
+//     add_word("he he");
+//     add_word("where");
+//     printf("%d\n", find_word("Hello"));
+//     printf("%d\n", find_word("bye"));
+// }

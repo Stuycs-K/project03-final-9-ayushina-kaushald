@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include "queue.h"
+#include "words.h"
 
 void err(int i, char*message){
     if(i < 0){
@@ -54,6 +55,8 @@ int main(){
     fd_set read_fds;
 
     struct queue *plr_queue = create_queue(20); //max capacity
+
+    shm_setup(); //player queue shm
 
     while(1){
 
