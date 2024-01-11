@@ -42,7 +42,7 @@ int main(){
     int berr = bind(listen_socket, results->ai_addr, results->ai_addrlen);
     err(berr, "Error binding");
     listen(listen_socket, 3);//3 clients can wait to be processed
-    printf("Player x turn(x remaining players)\n");
+    
 
     int* playerList = calloc(20, sizeof(int));
     int players = 0;
@@ -88,6 +88,7 @@ int main(){
             playerList[players] = client_socket;
             players++;
             printf("Player %d has joined the game(%d current players)\n", client_socket, players);
+            printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
             int f = fork();
             if (f == 0) {
                 while (1) {
@@ -107,11 +108,11 @@ int main(){
                             //clear windows line ending
                             buff[strlen(buff)]=0;
                         }
-
                         printf("\nRecieved from client '%s'\n",buff);
-                    }
+                        printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
+                    } 
                 }
-            }
+            } 
             // if(players > 1){
             //     printf("Game starting!\n");
             // }
