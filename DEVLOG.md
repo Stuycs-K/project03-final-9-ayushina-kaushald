@@ -29,6 +29,11 @@ Create player queue in the server, fix makefile and server.c (30 mins)
 Finished enqueue/dequeue functions (10 mins)
 Server adds clients to queue and prints queue(20 mins)
 
+### 2024-01-10 - Brief description
+Testing what happens when client disconnects, remove from player queue (30 mins)
+Server checks if its the player turn before reading word from client (20 mins)
+Start add shared memory/file (10 mins)
+
 ## Dean Kaushal
 
 ### 2024-01-02 - Brief description
