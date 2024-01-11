@@ -71,7 +71,7 @@ int main(){
 
     while(1){
 
-        char buff[1025]="";
+        char *buff = malloc(BUFFER_SIZE);
 
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
@@ -87,6 +87,7 @@ int main(){
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
             fgets(buff, sizeof(buff), stdin);
             buff[strlen(buff)]=0;
+            buff = strsep(&buff, "\n");
             printf("Recieved from terminal: '%s'\n",buff);
         }
 
