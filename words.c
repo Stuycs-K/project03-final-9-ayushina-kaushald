@@ -1,4 +1,22 @@
 #include "words.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <time.h>
+
+char *generateLetter() {
+    char *result = malloc(2);
+    result[0] = 'a' + rand() % 26;
+    return result;
+}
+
+int checkWord(char *word, char letter) {
+    if(word[0] == letter){
+        return 1;
+    } 
+    return 0;
+}
+
 
 void file_setup() {
     int file = open(FILE_NAME, O_CREAT | O_TRUNC, 0644);
@@ -34,4 +52,7 @@ int main() {
     add_word("where");
     printf("%d\n", find_word("Hello"));
     printf("%d\n", find_word("bye"));
+    // if(wordValid("Hello", 'H')){
+    //     printf("Word is valid!");
+    // }
 }
