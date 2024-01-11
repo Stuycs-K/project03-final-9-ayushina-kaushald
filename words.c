@@ -36,6 +36,16 @@ void shm_setup() {
     }
 }
 
+void remove_shm() {
+    int shmid = shmget(SHM_KEY, sizeof(int), 0644);
+    if (shmid == -1) {
+        printf("shmget error %d: %s\n", errno, strerror(errno));
+    }
+    else {
+        shmctl(shmid, IPC_RMID, 0);
+    }
+}
+
 // int main() {
 //     file_setup();
 //     add_word("Hello");

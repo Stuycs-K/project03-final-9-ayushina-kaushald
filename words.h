@@ -19,4 +19,5 @@ void file_setup();
 void add_word(char *word);
 int find_word(char *word);
 void shm_setup();
+void remove_shm();
 #endif
