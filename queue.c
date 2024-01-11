@@ -14,7 +14,7 @@ void enqueue(struct queue *q, int elem) {
     q->back = (q->back + 1) % q->capacity; 
     q->arr[q->back] = elem;
     q->size += 1;
-    printf("elem %d", elem);
+    //printf("elem %d", elem);
 }
 
 int dequeue(struct queue *q) {

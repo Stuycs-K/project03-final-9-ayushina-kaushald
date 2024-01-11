@@ -27,6 +27,12 @@ int find_word(char *word) {
     return 0;
 }
 
+void shm_setup() {
+    int *data;
+    int shmid;
+    shmid = shmget(SHM_KEY, sizeof(int), IPC_CREAT | 0644);
+}
+
 int main() {
     file_setup();
     add_word("Hello");

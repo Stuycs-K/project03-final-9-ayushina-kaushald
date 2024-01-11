@@ -82,7 +82,7 @@ int main(){
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
             printf("Connected, waiting for data.\n");
             err(client_socket, "server accept error");
-            printf("%d\n", client_socket);
+            printf("New player %d\n", client_socket);
             enqueue(plr_queue, client_socket);
             print_queue(plr_queue);
             playerList[players] = client_socket;
@@ -97,6 +97,7 @@ int main(){
                         printf("disconnected\n");
                         break;
                     }
+                    print_queue(plr_queue);
                     if (get_front(plr_queue) == client_socket) {
                         dequeue(plr_queue);
                         enqueue(plr_queue, client_socket);
