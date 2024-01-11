@@ -45,14 +45,23 @@ int find_word(char *word) {
     return 0;
 }
 
+int wordValid(char * word, char letter){
+    if(checkWord(word, letter)){
+        if(find_word(word)){
+            return 1;
+        }
+    }
+    return 0;
+}
+
 int main() {
     file_setup();
     add_word("Hello");
     add_word("he he");
     add_word("where");
-    printf("%d\n", find_word("Hello"));
-    printf("%d\n", find_word("bye"));
-    // if(wordValid("Hello", 'H')){
-    //     printf("Word is valid!");
-    // }
+    // printf("%d\n", find_word("Hello"));
+    // printf("%d\n", find_word("bye"));
+    if(wordValid("Hello", 'H')){
+        printf("Word is valid!");
+    }
 }
