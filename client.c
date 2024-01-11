@@ -60,6 +60,7 @@ int main() {
                 break;
             }
             buff[bytes_received] = '\0';
+            printf("size %ld bytes %ld\n", sizeof(buff), bytes_received);
             printf("Received from server: '%s'\n", buff);
         }
     }
