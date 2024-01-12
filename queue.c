@@ -11,16 +11,27 @@ struct queue *create_queue(int max_capacity) {
 }
 
 void enqueue(struct queue *q, int elem) {
+    printf("\nstarting enqueue\n");
+    debug_print(q);
     q->back = (q->back + 1) % q->capacity; 
     q->arr[q->back] = elem;
     q->size += 1;
     //printf("elem %d", elem);
+    printf("ending enqueue\n\n");
+    debug_print(q);
 }
 
 int dequeue(struct queue *q) {
+    printf("starting dequeue\n");
+    debug_print(q);
     int elem = q->arr[q->front];
-    q->front = (q->front + 1) % q->capacity;
     q->size -= 1;
+    if (q->size > 0) {
+        q->front = (q->front + 1) % q->capacity;
+    }
+    printf("ending dequeue\n");
+    debug_print(q);
+    printf("\n");
     return elem;
 }
 
