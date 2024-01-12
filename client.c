@@ -46,6 +46,11 @@ int main() {
             fgets(buff, BUFFER_SIZE, stdin);
             buff[strlen(buff)] = '\0';
             buff = strsep(&buff, "\n");
+            if(wordValid(buff, 'h')){
+                add_word(buff);
+            } else {
+                printf("word is not valid");
+            }
             int wbytes = write(client_socket, buff, BUFFER_SIZE);
         }
 
