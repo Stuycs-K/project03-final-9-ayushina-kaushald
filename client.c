@@ -27,9 +27,10 @@ int main() {
     printf("Welcome to Word Bomb!\n");
 
     fd_set read_fds;
-    char *buff = malloc(BUFFER_SIZE);
 
     while (1) {
+        char *buff = malloc(BUFFER_SIZE);
+
         FD_ZERO(&read_fds);
         FD_SET(STDIN_FILENO, &read_fds);
         FD_SET(client_socket, &read_fds);
@@ -42,14 +43,14 @@ int main() {
         }
 
         if (FD_ISSET(STDIN_FILENO, &read_fds)) {
-            fgets(buff, sizeof(buff), stdin);
+            fgets(buff, BUFFER_SIZE, stdin);
             buff[strlen(buff)] = '\0';
             buff = strsep(&buff, "\n");
-            int wbytes = write(client_socket, buff, sizeof(buff));
+            int wbytes = write(client_socket, buff, BUFFER_SIZE);
         }
 
         if (FD_ISSET(client_socket, &read_fds)) {
-            ssize_t bytes_received = recv(client_socket, buff, sizeof(buff), 0);
+            ssize_t bytes_received = recv(client_socket, buff, BUFFER_SIZE, 0);
 
             if (bytes_received <= 0) {
                 if (bytes_received == 0) {
@@ -60,7 +61,6 @@ int main() {
                 break;
             }
             buff[bytes_received] = '\0';
-            printf("size %ld bytes %ld\n", sizeof(buff), bytes_received);
             printf("Received from server: '%s'\n", buff);
         }
     }

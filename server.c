@@ -108,9 +108,9 @@ int main(){
             if (f == 0) {
                 while (1) {
                     //read the whole buff
-                    int rbytes = read(client_socket,buff, sizeof(buff));
+                    int rbytes = read(client_socket,buff, BUFFER_SIZE);
                     if (rbytes == 0) {
-                        printf("disconnected\n");
+                        printf("%d disconnected\n", client_socket);
                         break;
                     }
                     print_queue(plr_queue);
@@ -127,8 +127,7 @@ int main(){
                         printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
-                        write(client_socket, msg, strlen(msg));
-                        //printf("here\n");
+                        write(client_socket, msg, BUFFER_SIZE);
                     }
 
                 }
