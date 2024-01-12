@@ -110,7 +110,7 @@ int main(){
             playerList[players] = client_socket;
             players++;
             printf("Player %d has joined the game(%d current players)\n", client_socket, players);
-            printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
+            //printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
             int f = fork();
             if (f == 0) {
                 while (1) {
@@ -131,7 +131,7 @@ int main(){
                             buff[strlen(buff)]=0;
                         }
                         printf("\nRecieved from client '%s'\n",buff);
-                        printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
+                        //printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
                         write(client_socket, msg, BUFFER_SIZE);
