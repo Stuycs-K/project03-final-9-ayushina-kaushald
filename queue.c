@@ -58,12 +58,13 @@ void print_queue(struct queue *q) {
 void debug_print(struct queue *q) {
     printf("debug [");
     for (int i = 0; i < q->size; i++) {
-        if (q->arr[i]) {
-            printf(" %d ", q->arr[i]);
-        }
-        else {
-            printf(" - ");
-        }
+        printf(" %d ", q->arr[i]);
+        // if (q->arr[i]) {
+        //     printf(" %d ", q->arr[i]);
+        // }
+        // else {
+        //     printf(" - ");
+        // }
     }
     printf("] front %d back %d\n", q->front, q->back);
 }

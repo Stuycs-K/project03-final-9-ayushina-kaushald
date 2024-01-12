@@ -106,6 +106,7 @@ int main(){
 
             //debug_print(plr_queue);
             enqueue(plr_queue, client_socket);
+            printf("CLIENT %d\n", client_socket);
             //print_queue(plr_queue);
             playerList[players] = client_socket;
             players++;
@@ -122,7 +123,9 @@ int main(){
                     }
                     //print_queue(plr_queue);
                     if (get_front(plr_queue) == client_socket) {
+                        debug_print(plr_queue);
                         dequeue(plr_queue);
+                        debug_print(plr_queue);
                         enqueue(plr_queue, client_socket);
                         //trim the string
                         buff[strlen(buff)]=0; //clear newline
