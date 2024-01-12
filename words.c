@@ -68,7 +68,7 @@ int wordValid(char * word, char letter){
 void remove_shm() {
     int shmid = shmget(SHM_KEY, sizeof(struct queue), 0644);
     if (shmid == -1) {
-        printf("shmget error %d: %s\n", errno, strerror(errno));
+        //printf("shmget error %d: %s\n", errno, strerror(errno));
     }
     else {
         shmctl(shmid, IPC_RMID, 0);

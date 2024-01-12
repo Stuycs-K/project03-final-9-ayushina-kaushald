@@ -1,13 +1,11 @@
 #include "queue.h"
 
-struct queue *create_queue(int max_capacity) {
-    struct queue *q = malloc(sizeof(struct queue));
+void create_queue(struct queue *q, int max_capacity) {
     q->capacity = max_capacity;
     q->front = 0;
     q->size = 0;
     q->arr = malloc(max_capacity * sizeof(int));
     q->back = max_capacity - 1;
-    return q;
 }
 
 void enqueue(struct queue *q, int elem) {
@@ -17,8 +15,9 @@ void enqueue(struct queue *q, int elem) {
     q->arr[q->back] = elem;
     q->size += 1;
     //printf("elem %d", elem);
-    printf("ending enqueue\n\n");
+    printf("ending enqueue\n");
     debug_print(q);
+    printf("\n");
 }
 
 int dequeue(struct queue *q) {
@@ -59,7 +58,12 @@ void print_queue(struct queue *q) {
 void debug_print(struct queue *q) {
     printf("debug [");
     for (int i = 0; i < q->size; i++) {
-        printf(" %d ", q->arr[i]);
+        if (q->arr[i]) {
+            printf(" %d ", q->arr[i]);
+        }
+        else {
+            printf(" - ");
+        }
     }
     printf("] front %d back %d\n", q->front, q->back);
 }

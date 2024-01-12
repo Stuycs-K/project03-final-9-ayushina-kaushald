@@ -7,7 +7,7 @@ struct queue {
     int front, back, size, capacity;
     int *arr;
 };
-struct queue *create_queue(int max_capacity);
+void create_queue(struct queue *q, int max_capacity);
 void enqueue(struct queue *q, int elem);
 int dequeue(struct queue *q);
 void debug_print(struct queue *q);
