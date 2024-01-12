@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include "queue.h"
 
 char *generateLetter() {
     char *result = malloc(2);
@@ -45,13 +46,14 @@ int find_word(char *word) {
     return 0;
 }
 
-void shm_setup() {
+int shm_setup() {
     int *data;
     int shmid;
-    shmid = shmget(SHM_KEY, sizeof(int), IPC_CREAT | 0644);
+    shmid = shmget(SHM_KEY, sizeof(struct queue), IPC_CREAT | 0644);
     if (shmid == -1) {
         printf("shmget error %d: %s\n", errno, strerror(errno));
     }
+    return shmid;
 }
 
 int wordValid(char * word, char letter){
@@ -64,7 +66,7 @@ int wordValid(char * word, char letter){
 }
 
 void remove_shm() {
-    int shmid = shmget(SHM_KEY, sizeof(int), 0644);
+    int shmid = shmget(SHM_KEY, sizeof(struct queue), 0644);
     if (shmid == -1) {
         printf("shmget error %d: %s\n", errno, strerror(errno));
     }

@@ -65,9 +65,10 @@ int main(){
 
     fd_set read_fds;
 
-    struct queue *plr_queue = create_queue(20); //max capacity
-
-    shm_setup(); //player queue shm
+    int shmid = shm_setup(); //player queue shm
+    struct queue *player_queue = shmat(shmid, 0, 0);
+    player_queue = create_queue(20); //max capacity
+    shmdt(player_queue);
 
     while(1){
 
@@ -98,6 +99,11 @@ int main(){
             printf("Connected, waiting for data.\n");
             err(client_socket, "server accept error");
             printf("New player %d\n", client_socket);
+
+            int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+            struct queue *plr_queue = shmat(shmid, 0, 0); //attach
+
+            debug_print(plr_queue);
             enqueue(plr_queue, client_socket);
             print_queue(plr_queue);
             playerList[players] = client_socket;
@@ -132,6 +138,9 @@ int main(){
 
                 }
             } 
+
+            shmdt(plr_queue); //detach
+
             // if(players > 1){
             //     printf("Game starting!\n");
             // }

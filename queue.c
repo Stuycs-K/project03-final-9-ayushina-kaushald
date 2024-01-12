@@ -45,6 +45,14 @@ void print_queue(struct queue *q) {
     printf("]\n");
 }
 
+void debug_print(struct queue *q) {
+    printf("debug [");
+    for (int i = 0; i < q->size; i++) {
+        printf(" %d ", q->arr[i]);
+    }
+    printf("] front %d back %d\n", q->front, q->back);
+}
+
 // int main() {
 //     struct queue *q = create_queue(20);
 //     enqueue(q, 30);
