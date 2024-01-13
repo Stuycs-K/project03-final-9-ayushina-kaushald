@@ -57,7 +57,7 @@ void print_queue(struct queue *q) {
 
 void debug_print(struct queue *q) {
     printf("debug [");
-    for (int i = 0; i < q->size; i++) {
+    for (int i = 0; i < q->capacity; i++) {
         printf(" %d ", q->arr[i]);
         // if (q->arr[i]) {
         //     printf(" %d ", q->arr[i]);

@@ -56,8 +56,8 @@ int main(){
     listen(listen_socket, 3);//3 clients can wait to be processed
     
 
-    int* playerList = calloc(20, sizeof(int));
-    int players = 0;
+    // int* playerList = calloc(20, sizeof(int));
+    // int players = 0;
     
     socklen_t sock_size;
     struct sockaddr_storage client_address;
@@ -108,10 +108,12 @@ int main(){
             enqueue(plr_queue, client_socket);
             printf("CLIENT %d\n", client_socket);
             //print_queue(plr_queue);
-            playerList[players] = client_socket;
-            players++;
-            printf("Player %d has joined the game(%d current players)\n", client_socket, players);
-            printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
+            // playerList[players] = client_socket;
+            // players++;
+            printf("Player %d has joined the game(%d current players)\n", client_socket, plr_queue->size);
+            printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
+            shmdt(plr_queue);
+            
             int f = fork();
             if (f == 0) {
                 while (1) {
@@ -121,11 +123,15 @@ int main(){
                         printf("%d disconnected\n", client_socket);
                         break;
                     }
+
+                    int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+                    plr_queue = shmat(shmid, 0, 0); //attach
+
                     //print_queue(plr_queue);
+                    printf("CLIENT: %d\n", client_socket);
                     if (get_front(plr_queue) == client_socket) {
                         debug_print(plr_queue);
                         dequeue(plr_queue);
-                        debug_print(plr_queue);
                         enqueue(plr_queue, client_socket);
                         //trim the string
                         buff[strlen(buff)]=0; //clear newline
@@ -134,16 +140,16 @@ int main(){
                             buff[strlen(buff)]=0;
                         }
                         printf("\nRecieved from client '%s'\n",buff);
-                        printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
+                        debug_print(plr_queue);
+                        // printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
                         write(client_socket, msg, BUFFER_SIZE);
                     }
 
+                    shmdt(plr_queue);
                 }
             } 
-
-            shmdt(plr_queue); //detach
 
             // if(players > 1){
             //     printf("Game starting!\n");
