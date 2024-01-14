@@ -15,6 +15,7 @@
 #include "queue.h"
 #include "words.h"
 
+
 static void sighandler(int signo) {
     if (signo == SIGINT) {
         printf("\nInterrupted\n");
@@ -41,6 +42,11 @@ void set_timer(int seconds) {
     timer.it_value.tv_usec = 0;
     timer.it_interval = timer.it_value;
     setitimer(ITIMER_REAL, &timer, NULL);
+}
+
+void reset_timer() {
+    set_timer(0);
+    
 }
 
 int main(){
@@ -135,7 +141,9 @@ int main(){
                 serialize(player_queue, data);
                 shmdt(data);
             }
-            
+
+            set_timer(5); 
+
             int f = fork();
             if (f == 0) {
                 while (1) {
@@ -154,6 +162,8 @@ int main(){
                     //print_queue(plr_queue);
                     printf("CLIENT: %d\n", client_socket);
                     if (get_front(plr_queue) == client_socket) {
+                        reset_timer();
+                        set_timer(5);
                         dequeue(plr_queue);
                         enqueue(plr_queue, client_socket);
                         //trim the string
@@ -165,6 +175,7 @@ int main(){
                         printf("\nRecieved from client '%s'\n",buff);
                         debug_print(plr_queue);
                         printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
+                        reset_timer();
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
                         write(client_socket, msg, BUFFER_SIZE);
@@ -172,6 +183,7 @@ int main(){
 
                     serialize(plr_queue, data);
                     shmdt(data);
+
                 }
             } 
 
