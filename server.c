@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <signal.h>
+#include <sys/time.h>
 #include "queue.h"
 #include "words.h"
 
@@ -27,6 +28,14 @@ void err(int i, char*message){
         printf("Error: %s - %s\n",message, strerror(errno));
         exit(1);
     }
+}
+
+void set_timer(int seconds) {
+    struct itimerval timer;
+    timer.it_value.tv_sec = seconds;
+    timer.it_value.tv_usec = 0;
+    timer.it_interval = timer.it_value;
+    setitimer(ITIMER_REAL, &timer, NULL);
 }
 
 int main(){
