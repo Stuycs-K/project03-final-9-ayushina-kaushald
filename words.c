@@ -49,7 +49,7 @@ int find_word(char *word) {
 int shm_setup() {
     int *data;
     int shmid;
-    shmid = shmget(SHM_KEY, sizeof(struct queue), IPC_CREAT | 0644);
+    shmid = shmget(SHM_KEY, SHM_SIZE, IPC_CREAT | 0666);
     if (shmid == -1) {
         printf("shmget error %d: %s\n", errno, strerror(errno));
     }
@@ -66,7 +66,7 @@ int wordValid(char * word, char letter){
 }
 
 void remove_shm() {
-    int shmid = shmget(SHM_KEY, sizeof(struct queue), 0644);
+    int shmid = shmget(SHM_KEY, SHM_SIZE, 0);
     if (shmid == -1) {
         //printf("shmget error %d: %s\n", errno, strerror(errno));
     }

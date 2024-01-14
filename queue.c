@@ -1,29 +1,76 @@
 #include "queue.h"
 
-void create_queue(struct queue *q, int max_capacity) {
-    q->capacity = max_capacity;
+struct queue *create_queue() {
+    struct queue *q = malloc(sizeof(struct queue));
+    q->capacity = MAX_CAPACITY;
     q->front = 0;
     q->size = 0;
-    q->arr = malloc(max_capacity * sizeof(int));
-    q->back = max_capacity - 1;
+    q->arr = malloc(q->capacity * sizeof(int));
+    q->back = 0;
+    return q;
+}
+
+void serialize(struct queue *q, int *data) {
+    data[0] = q->capacity;
+    data[1] = q->size;
+    data[2] = q->front;
+    data[3] = q->back;
+    for (int i = 0; i < q->capacity; i++) {
+        data[4 + i] = q->arr[i];
+    }
+    // printf("\nSerialize\n");
+    // printf("SHM_SIZE: %ld\n", SHM_SIZE);
+    // printf("[");
+    // for (int i = 0; i < SHM_SIZE / sizeof(int); i++) {
+    //     printf(" %d ", data[i]);
+    // }
+    // printf("]\n\n");
+}
+
+struct queue *deserialize(int *data) {
+    struct queue *q = create_queue();
+    q->capacity = data[0];
+    q->size = data[1];
+    q->front = data[2];
+    q->back = data[3];
+    for (int i = 0; i < q->capacity; i++) {
+        q->arr[i] = data[4 + i];
+    }
+    // printf("\nDeserialize\n");
+    // printf("[");
+    // for (int i = 0; i < SHM_SIZE / sizeof(int); i++) {
+    //     printf(" %d ", data[i]);
+    // }
+    // printf("]\n\n");
+    // printf("SHM_SIZE: %ld\n", SHM_SIZE);
+    // debug_print(q);
+    // printf("End of deserialize\n");
+    return q;
 }
 
 void enqueue(struct queue *q, int elem) {
     // printf("\nstarting enqueue\n");
     // debug_print(q);
-    q->back = (q->back + 1) % q->capacity; 
-    q->arr[q->back] = elem;
+    if (q->size == 0) {
+        q->arr[q->back] = elem;
+    }
+    else {
+        q->back = (q->back + 1) % q->capacity; 
+        q->arr[q->back] = elem;
+    }
     q->size += 1;
-    //printf("elem %d", elem);
+
+    // printf("elem %d\n", elem);
     // printf("ending enqueue\n");
     // debug_print(q);
     // printf("\n");
 }
 
 int dequeue(struct queue *q) {
-    // printf("starting dequeue\n");
+    // printf("\nstarting dequeue\n");
     // debug_print(q);
     int elem = q->arr[q->front];
+    q->arr[q->front] = 0;
     q->size -= 1;
     if (q->size > 0) {
         q->front = (q->front + 1) % q->capacity;
@@ -38,13 +85,13 @@ int get_front(struct queue *q) {
     return q->arr[q->front];
 }
 
-void remove_plr(int *arr, int elem) {
-    for (int i = 0; i < sizeof(arr)/sizeof(int); i += sizeof(int)) {
-        if (arr[i] == elem) {
+// void remove_plr(int *arr, int elem) {
+//     for (int i = 0; i < sizeof(arr)/sizeof(int); i += sizeof(int)) {
+//         if (arr[i] == elem) {
             
-        }
-    }
-}
+//         }
+//     }
+// }
 
 void print_queue(struct queue *q) {
     printf("[");
