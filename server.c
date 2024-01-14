@@ -15,7 +15,8 @@
 #include "queue.h"
 #include "words.h"
 
-int timer_flag = 0;
+int shmid_timer;
+int *timer_flag;
 
 void err(int i, char*message){
     if(i < 0){
@@ -47,7 +48,7 @@ static void sighandler(int signo) {
         serialize(plr_queue, data);
         shmdt(data);
 
-        timer_flag = 1;
+        *timer_flag = 1;
     }
 }
 
@@ -61,7 +62,7 @@ void set_timer(int seconds) {
 
 void reset_timer() {
     set_timer(0);
-    timer_flag = 0;
+    *timer_flag = 0;
 }
 
 int main(){
@@ -110,6 +111,10 @@ int main(){
         shmdt(data);
     }
 
+    shmid_timer = shmget(IPC_PRIVATE, sizeof(int), IPC_CREAT | 0666);
+    timer_flag = (int *)shmat(shmid_timer, 0, 0);
+    *timer_flag = 0;
+
     while(1){
 
         char *buff = malloc(BUFFER_SIZE);
@@ -157,7 +162,7 @@ int main(){
                 shmdt(data);
             }
 
-            set_timer(5); 
+            set_timer(10); 
 
             int f = fork();
             if (f == 0) {
@@ -178,7 +183,7 @@ int main(){
                     printf("CLIENT: %d\n", client_socket);
                     if (get_front(plr_queue) == client_socket) {
                         reset_timer();
-                        set_timer(5);
+                        set_timer(10);
                         dequeue(plr_queue);
                         enqueue(plr_queue, client_socket);
                         //trim the string
@@ -190,7 +195,7 @@ int main(){
                         printf("\nRecieved from client '%s'\n",buff);
                         debug_print(plr_queue);
                         printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
-                        // reset_timer();
+                        reset_timer();
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
                         write(client_socket, msg, BUFFER_SIZE);
@@ -199,7 +204,7 @@ int main(){
                     serialize(plr_queue, data);
                     shmdt(data);
 
-                    if(timer_flag) {
+                    if(*timer_flag) {
                         break;
                     }
                 }
