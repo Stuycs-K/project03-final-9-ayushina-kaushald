@@ -17,6 +17,13 @@
 
 int timer_flag = 0;
 
+void err(int i, char*message){
+    if(i < 0){
+        printf("Error: %s - %s\n",message, strerror(errno));
+        exit(1);
+    }
+}
+
 static void sighandler(int signo) {
     if (signo == SIGINT) {
         printf("\nInterrupted\n");
@@ -25,15 +32,22 @@ static void sighandler(int signo) {
     }
     if (signo == SIGALRM) {
         printf("Time ran out. Next player's turn\n");
-        //code to skip player in queue
-        timer_flag = 1;
-    }
-}
+        
+        int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+        int *data = shmat(shmid, 0, 0); //attach
+        struct queue *plr_queue = deserialize(data);
+        int skipped_client = dequeue(plr_queue);
+        enqueue(plr_queue, skipped_client);
 
-void err(int i, char*message){
-    if(i < 0){
-        printf("Error: %s - %s\n",message, strerror(errno));
-        exit(1);
+        char *buff = malloc(BUFFER_SIZE);
+        strcpy(buff, "Time ran out.");
+        int wbytes = write(skipped_client, buff, BUFFER_SIZE);
+        err(wbytes, "sigalrm write to client error");
+
+        serialize(plr_queue, data);
+        shmdt(data);
+
+        timer_flag = 1;
     }
 }
 
@@ -176,7 +190,7 @@ int main(){
                         printf("\nRecieved from client '%s'\n",buff);
                         debug_print(plr_queue);
                         printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
-                        reset_timer();
+                        // reset_timer();
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
                         write(client_socket, msg, BUFFER_SIZE);
