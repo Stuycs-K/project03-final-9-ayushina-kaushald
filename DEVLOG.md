@@ -34,6 +34,16 @@ Testing what happens when client disconnects, remove from player queue (30 mins)
 Server checks if its the player turn before reading word from client (20 mins)
 Start add shared memory/file (10 mins)
 
+### 2024-01-11 - Brief description
+Server sets up and removes shared memory (15 mins)
+Changed the buffer size of read/write but there is an issue (15 mins)
+Fixed read/write buffer size bug (10 mins)
+Tried to fix issue getting shared memory, added debug print function (20 mins)
+
+### 2024-01-12 - Brief description
+Fixed shared memory and queue on the server so it only reads from the client when it is their turn (30 mins)
+
+
 ## Dean Kaushal
 
 ### 2024-01-02 - Brief description
