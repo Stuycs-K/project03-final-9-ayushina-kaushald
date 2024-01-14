@@ -15,6 +15,7 @@
 #include "queue.h"
 #include "words.h"
 
+int timer_flag = 0;
 
 static void sighandler(int signo) {
     if (signo == SIGINT) {
@@ -25,7 +26,7 @@ static void sighandler(int signo) {
     if (signo == SIGALRM) {
         printf("Time ran out. Next player's turn\n");
         //code to skip player in queue
-
+        timer_flag = 1;
     }
 }
 
@@ -46,7 +47,7 @@ void set_timer(int seconds) {
 
 void reset_timer() {
     set_timer(0);
-    
+    timer_flag = 0;
 }
 
 int main(){
@@ -184,6 +185,9 @@ int main(){
                     serialize(plr_queue, data);
                     shmdt(data);
 
+                    if(timer_flag) {
+                        break;
+                    }
                 }
             } 
 
