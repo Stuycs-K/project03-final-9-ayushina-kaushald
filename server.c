@@ -21,6 +21,11 @@ static void sighandler(int signo) {
         remove_shm();
         exit(0);
     }
+    if (signo == SIGALRM) {
+        printf("Time ran out. Next player's turn\n");
+        //code to skip player in queue
+
+    }
 }
 
 void err(int i, char*message){
@@ -40,6 +45,7 @@ void set_timer(int seconds) {
 
 int main(){
     signal(SIGINT, sighandler);
+    signal(SIGALRM, sighandler); 
 
     struct addrinfo * hints, * results;
     hints = calloc(1,sizeof(struct addrinfo));
