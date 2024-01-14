@@ -1,6 +1,8 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/ipc.h>
+#include <sys/shm.h>
 #include <netdb.h>
 #include <time.h>
 #include <stdio.h>
@@ -56,8 +58,8 @@ int main(){
     listen(listen_socket, 3);//3 clients can wait to be processed
     
 
-    int* playerList = calloc(20, sizeof(int));
-    int players = 0;
+    // int* playerList = calloc(20, sizeof(int));
+    // int players = 0;
     
     socklen_t sock_size;
     struct sockaddr_storage client_address;
@@ -65,11 +67,12 @@ int main(){
 
     fd_set read_fds;
 
-    // struct queue *plr_queue = create_queue(20);
-    int shmid = shm_setup(); //player queue shm
-    struct queue *player_queue = shmat(shmid, 0, 0);
-    create_queue(player_queue, 20); //max capacity
-    shmdt(player_queue);
+    {
+        int shmid = shm_setup(); //player queue shm
+        int *data = shmat(shmid, 0, 0);
+        serialize(create_queue(), data);
+        shmdt(data);
+    }
 
     while(1){
 
@@ -101,16 +104,23 @@ int main(){
             err(client_socket, "server accept error");
             printf("New player %d\n", client_socket);
 
-            int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
-            struct queue *plr_queue = shmat(shmid, 0, 0); //attach
+            {
+                int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+                int *data = shmat(shmid, 0, 0); //attach
+                struct queue *player_queue = deserialize(data);
 
-            //debug_print(plr_queue);
-            enqueue(plr_queue, client_socket);
-            //print_queue(plr_queue);
-            playerList[players] = client_socket;
-            players++;
-            printf("Player %d has joined the game(%d current players)\n", client_socket, players);
-            //printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
+                //debug_print(plr_queue);
+                enqueue(player_queue, client_socket);
+                printf("CLIENT %d\n", client_socket);
+                //print_queue(plr_queue);
+                // playerList[players] = client_socket;
+                // players++;
+                printf("Player %d has joined the game(%d current players)\n", client_socket, player_queue->size);
+                printf("Player %d's turn(%d remaining players)\n", get_front(player_queue), player_queue->size);
+                serialize(player_queue, data);
+                shmdt(data);
+            }
+            
             int f = fork();
             if (f == 0) {
                 while (1) {
@@ -120,7 +130,14 @@ int main(){
                         printf("%d disconnected\n", client_socket);
                         break;
                     }
+
+                    int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+                    int *data = shmat(shmid, 0, 0); //attach
+                    struct queue *plr_queue = deserialize(data);
+                    debug_print(plr_queue);
+
                     //print_queue(plr_queue);
+                    printf("CLIENT: %d\n", client_socket);
                     if (get_front(plr_queue) == client_socket) {
                         dequeue(plr_queue);
                         enqueue(plr_queue, client_socket);
@@ -131,16 +148,17 @@ int main(){
                             buff[strlen(buff)]=0;
                         }
                         printf("\nRecieved from client '%s'\n",buff);
-                        //printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), players);
+                        debug_print(plr_queue);
+                        printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
                         write(client_socket, msg, BUFFER_SIZE);
                     }
 
+                    serialize(plr_queue, data);
+                    shmdt(data);
                 }
             } 
-
-            shmdt(plr_queue); //detach
 
             // if(players > 1){
             //     printf("Game starting!\n");
