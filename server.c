@@ -66,6 +66,8 @@ void reset_timer() {
 }
 
 int main(){
+    file_setup();
+
     signal(SIGINT, sighandler);
     signal(SIGALRM, sighandler); 
 
