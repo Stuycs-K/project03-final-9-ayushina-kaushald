@@ -59,7 +59,7 @@ int main() {
             if(wordValid(buff, received_letter)){
                 // printf("Word is valid!\n");
                 //printf("word inputted: %s\n", buff);
-                add_word(buff);
+                // add_word(buff);
                 int wbytes = write(client_socket, buff, BUFFER_SIZE);
             }
             else {

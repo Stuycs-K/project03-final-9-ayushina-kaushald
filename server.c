@@ -273,7 +273,24 @@ int main(){
                     //read the whole buff
                     int rbytes = read(client_socket,buff, BUFFER_SIZE);
                     if (rbytes == 0) {
-                        printf("%d disconnected\n", client_socket);
+                        printf("Client %d disconnected\n", client_socket);
+
+                        int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+                        int *data = shmat(shmid, 0, 0); //attach
+                        struct queue *plr_queue = deserialize(data);
+
+                        int front = get_front(plr_queue);
+
+                        remove_plr(plr_queue, client_socket); //remove player from the game
+                        serialize(plr_queue, data);
+                        shmdt(data);
+
+                        if (front == client_socket && plr_queue->size > 0) {
+                            //if it was their turn move to next player
+                            printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
+                            reset_timer();
+                        }
+                        
                         exit(0);
                     }
 
@@ -297,6 +314,9 @@ int main(){
                         }
                         printf("\nRecieved from client '%s'\n",buff);
                         debug_print(plr_queue);
+
+                        add_word(buff); //add word to file
+
                         printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
                         reset_timer();
                     } else {
