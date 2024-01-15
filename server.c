@@ -234,7 +234,7 @@ int main(){
         if (FD_ISSET(listen_socket, &read_fds)) {
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
-            if (send(client_socket, letter, sizeof(letter), 0) < 0) {
+            if (send(client_socket, letter, sizeof(char), 0) < 0) {
                 perror("Server send error");
                 exit(EXIT_FAILURE);
             }

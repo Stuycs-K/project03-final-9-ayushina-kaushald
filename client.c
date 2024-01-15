@@ -57,12 +57,14 @@ int main() {
             buff = strsep(&buff, "\n");
             //printf("word inputted: %s\n", buff);
             if(wordValid(buff, received_letter)){
-                printf("Word is valid!\n");
+                // printf("Word is valid!\n");
                 //printf("word inputted: %s\n", buff);
                 add_word(buff);
+                int wbytes = write(client_socket, buff, BUFFER_SIZE);
             }
-            //printf("Word is valid!");
-            int wbytes = write(client_socket, buff, BUFFER_SIZE);
+            else {
+                printf("Invalid word.\n");
+            }
         }
 
         if (FD_ISSET(client_socket, &read_fds)) {

@@ -61,8 +61,9 @@ int wordValid(char * word, char letter){
         if(find_word(word)){
             return 0;
         }
+        return 1;
     }
-    return 1;
+    return 0;
 }
 
 void remove_shm() {

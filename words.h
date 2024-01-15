@@ -14,10 +14,12 @@
 
 #ifndef WORDS_H
 #define WORDS_H
-#define FILE_NAME "words"
+#define FILE_NAME "used_words.TEXT"
 #define BUFFER_SIZE 1024
 #define SHM_KEY 0xdeadbeef
 #define SIGSHM_KEY 0xbeefdead
+char *generateLetter();
+int checkWord(char *word, char letter);
 void file_setup();
 void add_word(char *word);
 int find_word(char *word);
