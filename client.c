@@ -26,9 +26,18 @@ int main() {
 
     printf("Welcome to Word Bomb!\n");
 
+    char received_letter;
+    if (recv(client_socket, &received_letter, sizeof(received_letter), 0) < 0) {
+        perror("Client receive error");
+        exit(EXIT_FAILURE);
+    }
+    printf("Received random letter from server: %c\n", received_letter);
+
     fd_set read_fds;
 
     while (1) {
+
+
         char *buff = malloc(BUFFER_SIZE);
 
         FD_ZERO(&read_fds);
@@ -46,6 +55,13 @@ int main() {
             fgets(buff, BUFFER_SIZE, stdin);
             buff[strlen(buff)] = '\0';
             buff = strsep(&buff, "\n");
+            //printf("word inputted: %s\n", buff);
+            if(wordValid(buff, received_letter)){
+                printf("Word is valid!\n");
+                //printf("word inputted: %s\n", buff);
+                add_word(buff);
+            }
+            //printf("Word is valid!");
             int wbytes = write(client_socket, buff, BUFFER_SIZE);
         }
 

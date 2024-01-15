@@ -59,10 +59,10 @@ int shm_setup() {
 int wordValid(char * word, char letter){
     if(checkWord(word, letter)){
         if(find_word(word)){
-            return 1;
+            return 0;
         }
     }
-    return 0;
+    return 1;
 }
 
 void remove_shm() {

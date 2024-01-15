@@ -111,6 +111,13 @@ void reset_timer() {
 }
 
 int main(){
+    srand(time(NULL));
+
+    file_setup();
+
+    char *letter = generateLetter();
+    printf("The letter of this game is: %s\n", letter);
+
     signal(SIGINT, sighandler);
     signal(SIGALRM, sighandler);
 
@@ -227,6 +234,10 @@ int main(){
         if (FD_ISSET(listen_socket, &read_fds)) {
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
+            if (send(client_socket, letter, sizeof(letter), 0) < 0) {
+                perror("Server send error");
+                exit(EXIT_FAILURE);
+            }
             printf("Connected, waiting for data.\n");
             err(client_socket, "server accept error");
             printf("New player %d\n", client_socket);
