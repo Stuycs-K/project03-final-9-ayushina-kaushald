@@ -85,13 +85,28 @@ int get_front(struct queue *q) {
     return q->arr[q->front];
 }
 
-// void remove_plr(int *arr, int elem) {
-//     for (int i = 0; i < sizeof(arr)/sizeof(int); i += sizeof(int)) {
-//         if (arr[i] == elem) {
-            
-//         }
-//     }
-// }
+void remove_plr(struct queue *q, int elem) {
+    if (q->size == 0) return;
+    int shift = 0;
+    for (int i = 0; i < q->capacity; i++) {
+        int index = (q->front + i) % q->capacity;
+        if (shift) {
+            int prevInd = (index - 1) % q->capacity;
+            q->arr[prevInd] = q->arr[index];
+            q->arr[index] = 0;
+        }
+        else {
+            if (q->arr[index] == elem) {
+                q->arr[index] = 0;
+                shift = 1;
+            }
+        }
+    }
+    if (q->size > 1) {
+        q->back = (q->back - 1) % q->capacity;
+    }
+    q->size -= 1;
+}
 
 void print_queue(struct queue *q) {
     printf("[");
@@ -120,6 +135,14 @@ void debug_print(struct queue *q) {
 //     struct queue *q = create_queue(20);
 //     enqueue(q, 30);
 //     enqueue(q, 40);
-//     printf("%d\n", dequeue(q));
-//     printf("%d\n", dequeue(q));
+//     enqueue(q, 50);
+//     // printf("%d\n", dequeue(q));
+//     // printf("%d\n", dequeue(q));
+//     print_queue(q);
+//     remove_plr(q, 40);
+//     print_queue(q);
+//     remove_plr(q, 50);
+//     print_queue(q);
+//     remove_plr(q, 30);
+//     print_queue(q);
 // }

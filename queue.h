@@ -14,6 +14,7 @@ struct queue *deserialize(int *data);
 struct queue *create_queue();
 void enqueue(struct queue *q, int elem);
 int dequeue(struct queue *q);
+void remove_plr(struct queue *q, int elem);
 void debug_print(struct queue *q);
 void print_queue(struct queue *q);
 int get_front(struct queue *q);
