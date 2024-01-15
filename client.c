@@ -55,11 +55,13 @@ int main() {
             fgets(buff, BUFFER_SIZE, stdin);
             buff[strlen(buff)] = '\0';
             buff = strsep(&buff, "\n");
-            // if(wordValid(buff, 'h')){
-            //     printf("Word is valid!");
-            //     add_word(buff);
-            // }
-            printf("Word is valid!");
+            //printf("word inputted: %s\n", buff);
+            if(wordValid(buff, received_letter)){
+                printf("Word is valid!\n");
+                //printf("word inputted: %s\n", buff);
+                add_word(buff);
+            }
+            //printf("Word is valid!");
             int wbytes = write(client_socket, buff, BUFFER_SIZE);
         }
 
