@@ -15,7 +15,12 @@
 #include "queue.h"
 #include "words.h"
 
-int timer_flag = 0;
+#define SIGSHM_KEY 0xbeefdead
+
+int game_started = 0;
+
+// int shmid_timer;
+// int *timer_flag;
 
 void err(int i, char*message){
     if(i < 0){
@@ -26,46 +31,65 @@ void err(int i, char*message){
 
 static void sighandler(int signo) {
     if (signo == SIGINT) {
-        printf("\nInterrupted\n");
+        // printf("\nInterrupted\n");
         remove_shm();
         exit(0);
     }
     if (signo == SIGALRM) {
-        printf("SIGALRM pid: %d\n", getpid());
-        printf("Time ran out. ");
+        // printf("SIGALRM pid: %d\n", getpid());
+        // printf("Time ran out. ");
 
-        int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
-        int *data = shmat(shmid, 0, 0); //attach
-        struct queue *plr_queue = deserialize(data);
-        int skipped_client = dequeue(plr_queue);
-        enqueue(plr_queue, skipped_client);
+        // int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+        // int *data = shmat(shmid, 0, 0); //attach
+        // struct queue *plr_queue = deserialize(data);
+        // int skipped_client = dequeue(plr_queue);
+        // enqueue(plr_queue, skipped_client);
 
-        printf("Player %d goes next.\n", get_front(plr_queue));
+        // printf("Player %d goes next.\n", get_front(plr_queue));
 
-        char *buff = malloc(BUFFER_SIZE);
-        strcpy(buff, "Your time ran out.");
-        int wbytes = write(skipped_client, buff, BUFFER_SIZE);
-        err(wbytes, "sigalrm write to client error");
+        // char *buff = malloc(BUFFER_SIZE);
+        // strcpy(buff, "Your time ran out.");
+        // int wbytes = write(skipped_client, buff, BUFFER_SIZE);
+        // err(wbytes, "sigalrm write to client error");
 
-        serialize(plr_queue, data);
-        shmdt(data);
+        // serialize(plr_queue, data);
+        // shmdt(data);
 
-        timer_flag = 1;
+    //     int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), 0);
+    //     int *timer_flag = shmat(shmid_timer, 0, 0);
+    //     // err(timer_flag, " timer shmat error");
+    //     *timer_flag = 1;
+    //     shmdt(timer_flag);
     }
 }
 
 void set_timer(int seconds) {
     printf("set_timer from pid: %d\n", getpid());
-    struct itimerval timer;
-    timer.it_value.tv_sec = seconds;
-    timer.it_value.tv_usec = 0;
-    timer.it_interval = timer.it_value;
-    setitimer(ITIMER_REAL, &timer, NULL);
+    // struct itimerval timer;
+    // timer.it_value.tv_sec = seconds;
+    // timer.it_value.tv_usec = 0;
+    // timer.it_interval = timer.it_value;
+    // setitimer(ITIMER_REAL, &timer, NULL);
+    int f = fork();
+    if (f == 0) {
+        while (1) {
+            sleep(seconds);
+
+            int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), 0);
+            int *timer_flag = shmat(shmid_timer, 0, 0);
+            // err(timer_flag, " timer shmat error");
+            *timer_flag = 1;
+            shmdt(timer_flag);
+        }
+    }
 }
 
 void reset_timer() {
-    set_timer(0);
-    timer_flag = 0;
+    // set_timer(0);
+    // int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), 0);
+    // int *timer_flag = shmat(shmid_timer, 0, 0);
+    // *timer_flag = 0;
+    // shmdt(timer_flag);
 }
 
 int main(){
@@ -112,6 +136,49 @@ int main(){
         int *data = shmat(shmid, 0, 0);
         serialize(create_queue(), data);
         shmdt(data);
+    }
+
+    int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), IPC_CREAT | 0666);
+    int *timer_flag = (int *)shmat(shmid_timer, 0, 0);
+    *timer_flag = 0;
+    shmdt(timer_flag);
+
+    int sigf = fork();
+    if (sigf == 0) {
+        while(1) {
+            int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), 0);
+            int *timer_flag = (int *)shmat(shmid_timer, 0, 0);
+            if (*timer_flag == 1) {
+                printf("Timer!!!\n");
+
+                printf("pid %d\n", getpid());
+                printf("Time ran out. ");
+
+                int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+                int *data = shmat(shmid, 0, 0); //attach
+                struct queue *plr_queue = deserialize(data);
+                int skipped_client = dequeue(plr_queue);
+                enqueue(plr_queue, skipped_client);
+
+                printf("Skipped %d. Player %d goes next.\n", skipped_client, get_front(plr_queue));
+
+                // char *buff = malloc(BUFFER_SIZE);
+                // strcpy(buff, "Your time ran out.");
+                // int wbytes = write(skipped_client, buff, BUFFER_SIZE);
+                // err(wbytes, "sigalrm write to client error");
+
+                serialize(plr_queue, data);
+                shmdt(data);
+
+
+                *timer_flag = 0;
+            }
+            shmdt(timer_flag);
+            sleep(0.5);
+        }
+    }
+    else {
+        printf("sigf pid %d\n", sigf);
     }
 
     while(1){
@@ -161,7 +228,10 @@ int main(){
                 shmdt(data);
             }
 
-            set_timer(5);
+            if (game_started == 0) {
+                set_timer(5);
+                game_started = 1;
+            }
 
             printf("Parent pid: %d\n", getpid());
 
@@ -197,7 +267,7 @@ int main(){
                         printf("\nRecieved from client '%s'\n",buff);
                         debug_print(plr_queue);
                         printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue), plr_queue->size);
-                        // reset_timer();
+                        reset_timer();
                     } else {
                         char msg[BUFFER_SIZE] = "Wait your turn";
                         write(client_socket, msg, BUFFER_SIZE);
