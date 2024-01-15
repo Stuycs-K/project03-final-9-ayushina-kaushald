@@ -31,16 +31,19 @@ static void sighandler(int signo) {
         exit(0);
     }
     if (signo == SIGALRM) {
-        printf("Time ran out. Next player's turn\n");
-        
+        printf("SIGALRM pid: %d\n", getpid());
+        printf("Time ran out. ");
+
         int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
         int *data = shmat(shmid, 0, 0); //attach
         struct queue *plr_queue = deserialize(data);
         int skipped_client = dequeue(plr_queue);
         enqueue(plr_queue, skipped_client);
 
+        printf("Player %d goes next.\n", get_front(plr_queue));
+
         char *buff = malloc(BUFFER_SIZE);
-        strcpy(buff, "Time ran out.");
+        strcpy(buff, "Your time ran out.");
         int wbytes = write(skipped_client, buff, BUFFER_SIZE);
         err(wbytes, "sigalrm write to client error");
 
@@ -52,6 +55,7 @@ static void sighandler(int signo) {
 }
 
 void set_timer(int seconds) {
+    printf("set_timer from pid: %d\n", getpid());
     struct itimerval timer;
     timer.it_value.tv_sec = seconds;
     timer.it_value.tv_usec = 0;
@@ -66,7 +70,7 @@ void reset_timer() {
 
 int main(){
     signal(SIGINT, sighandler);
-    signal(SIGALRM, sighandler); 
+    signal(SIGALRM, sighandler);
 
     struct addrinfo * hints, * results;
     hints = calloc(1,sizeof(struct addrinfo));
@@ -79,7 +83,7 @@ int main(){
     getaddrinfo(NULL, PORT , hints, &results);  //NULL is localhost or 127.0.0.1
 
     //create socket
-    int listen_socket = socket(results->ai_family, results->ai_socktype, results->ai_protocol);\
+    int listen_socket = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
 
     //this code allows the port to be freed after program exit.  (otherwise wait a few minutes)
     int yes = 1;
@@ -92,11 +96,11 @@ int main(){
     int berr = bind(listen_socket, results->ai_addr, results->ai_addrlen);
     err(berr, "Error binding");
     listen(listen_socket, 3);//3 clients can wait to be processed
-    
+
 
     // int* playerList = calloc(20, sizeof(int));
     // int players = 0;
-    
+
     socklen_t sock_size;
     struct sockaddr_storage client_address;
     sock_size = sizeof(client_address);
@@ -157,16 +161,19 @@ int main(){
                 shmdt(data);
             }
 
-            set_timer(5); 
+            set_timer(5);
+
+            printf("Parent pid: %d\n", getpid());
 
             int f = fork();
             if (f == 0) {
+                printf("child pid: %d\n", getpid());
                 while (1) {
                     //read the whole buff
                     int rbytes = read(client_socket,buff, BUFFER_SIZE);
                     if (rbytes == 0) {
                         printf("%d disconnected\n", client_socket);
-                        break;
+                        exit(0);
                     }
 
                     int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
@@ -177,8 +184,8 @@ int main(){
                     //print_queue(plr_queue);
                     printf("CLIENT: %d\n", client_socket);
                     if (get_front(plr_queue) == client_socket) {
-                        reset_timer();
-                        set_timer(5);
+                        // reset_timer();
+                        // set_timer(5);
                         dequeue(plr_queue);
                         enqueue(plr_queue, client_socket);
                         //trim the string
@@ -199,11 +206,11 @@ int main(){
                     serialize(plr_queue, data);
                     shmdt(data);
 
-                    if(timer_flag) {
-                        break;
-                    }
+                    // if(timer_flag) {
+                    //     break;
+                    // }
                 }
-            } 
+            }
 
             // if(players > 1){
             //     printf("Game starting!\n");
