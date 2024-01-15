@@ -66,7 +66,12 @@ void reset_timer() {
 }
 
 int main(){
+    srand(time(NULL));
+    
     file_setup();
+
+    char *letter = generateLetter();
+    printf("The letter of this game is: %s\n", letter);
 
     signal(SIGINT, sighandler);
     signal(SIGALRM, sighandler); 
