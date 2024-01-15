@@ -272,7 +272,7 @@ int main(){
 
                 if (player_queue->size == MAX_CAPACITY) {
                     char *rejection = malloc(BUFFER_SIZE);
-                    sprintf(rejection, "Max players reached (%d)\n", MAX_CAPACITY);
+                    sprintf(rejection, "Game is full! (%d/%d players)", player_queue->size, MAX_CAPACITY);
                     write(client_socket, rejection, BUFFER_SIZE);
                     close(client_socket);
                     continue;
