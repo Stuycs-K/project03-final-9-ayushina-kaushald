@@ -12,10 +12,9 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/time.h>
+#include <time.h>
 #include "queue.h"
 #include "words.h"
-
-#define SIGSHM_KEY 0xbeefdead
 
 int game_started = 0;
 
@@ -73,12 +72,30 @@ void set_timer(int seconds) {
     int f = fork();
     if (f == 0) {
         while (1) {
-            sleep(seconds);
-
-            int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), 0);
+            // printf("Starting while!\n");
+            time_t start = time(NULL);
+            while ((time(NULL) - start) < seconds) {
+                usleep(0.1 * 1000000);
+                int shmid_timer = shmget(SIGSHM_KEY, sizeof(int) * 2, 0);
+                int *timer_flag = shmat(shmid_timer, 0, 0);
+                if (timer_flag[1] == 1) {
+                    // printf("Timer was reset!!!\n");
+                    //reset timer
+                    shmdt(timer_flag);
+                    break;
+                }
+            }
+            // printf("Time passed!!\n");
+            int shmid_timer = shmget(SIGSHM_KEY, sizeof(int) * 2, 0);
             int *timer_flag = shmat(shmid_timer, 0, 0);
-            // err(timer_flag, " timer shmat error");
-            *timer_flag = 1;
+            if (timer_flag[1] == 0) {
+                // printf("[1] == 0!!\n");
+                timer_flag[0] = 1; //time is up
+            }
+            else {
+                // printf("[1] == 1!!\n");
+                timer_flag[1] = 0; //timer is reset
+            }
             shmdt(timer_flag);
         }
     }
@@ -86,10 +103,11 @@ void set_timer(int seconds) {
 
 void reset_timer() {
     // set_timer(0);
-    // int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), 0);
-    // int *timer_flag = shmat(shmid_timer, 0, 0);
-    // *timer_flag = 0;
-    // shmdt(timer_flag);
+    printf("Resetting timer pid: %d\n", getpid());
+    int shmid_timer = shmget(SIGSHM_KEY, sizeof(int) * 2, 0);
+    int *timer_flag = shmat(shmid_timer, 0, 0);
+    timer_flag[1] = 1; //reset timer
+    shmdt(timer_flag);
 }
 
 int main(){
@@ -137,21 +155,23 @@ int main(){
         serialize(create_queue(), data);
         shmdt(data);
     }
-
-    int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), IPC_CREAT | 0666);
+    int shmid_timer = shmget(SIGSHM_KEY, sizeof(int) * 2, IPC_CREAT | 0666);
+    // err(shmid_timer, "shmget error");
     int *timer_flag = (int *)shmat(shmid_timer, 0, 0);
-    *timer_flag = 0;
+    // err(timer_flag, "shmat error");
+    timer_flag[0] = 0; // 1 when time is up
+    timer_flag[1] = 0; // 1 when resetting timer
     shmdt(timer_flag);
 
     int sigf = fork();
     if (sigf == 0) {
         while(1) {
-            int shmid_timer = shmget(SIGSHM_KEY, sizeof(int), 0);
+            int shmid_timer = shmget(SIGSHM_KEY, sizeof(int) * 2, 0);
             int *timer_flag = (int *)shmat(shmid_timer, 0, 0);
-            if (*timer_flag == 1) {
+            if (timer_flag[0] == 1) { //time is up
                 printf("Timer!!!\n");
 
-                printf("pid %d\n", getpid());
+                // printf("pid %d\n", getpid());
                 printf("Time ran out. ");
 
                 int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
@@ -171,10 +191,10 @@ int main(){
                 shmdt(data);
 
 
-                *timer_flag = 0;
+                timer_flag[0] = 0;
             }
             shmdt(timer_flag);
-            sleep(0.5);
+            usleep(0.1 * 1000000);
         }
     }
     else {

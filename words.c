@@ -73,6 +73,10 @@ void remove_shm() {
     else {
         shmctl(shmid, IPC_RMID, 0);
     }
+    int shmid_timer = shmget(SIGSHM_KEY, sizeof(int) * 2, 0);
+    if (shmid_timer != -1) {
+        shmctl(shmid_timer, IPC_RMID, 0);
+    }
 }
 
 // int main() {
