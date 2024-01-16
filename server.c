@@ -386,6 +386,10 @@ int main(){
                         char msg[BUFFER_SIZE] = "Game has not started";
                         write(client_socket, msg, BUFFER_SIZE);
                     }
+                    else if (find_word(buff)) {
+                        char msg[BUFFER_SIZE] = "Word already used";
+                        write(client_socket, msg, BUFFER_SIZE);
+                    }
                     else if (get_front(plr_queue) == client_socket) {
                         // reset_timer();
                         // set_timer(5);

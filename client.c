@@ -66,7 +66,7 @@ int main(int argc, char *argv[]) {
             buff[strlen(buff)] = '\0';
             buff = strsep(&buff, "\n");
             //printf("word inputted: %s\n", buff);
-            if(wordValid(buff, received_letter)){
+            if(checkWord(buff, received_letter)){
                 // printf("Word is valid!\n");
                 //printf("word inputted: %s\n", buff);
                 // add_word(buff);
