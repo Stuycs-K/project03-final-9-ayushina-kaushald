@@ -78,6 +78,10 @@ void remove_shm() {
     if (shmid_timer != -1) {
         shmctl(shmid_timer, IPC_RMID, 0);
     }
+    int shmid_start = shmget(STARTSHM_KEY, sizeof(int), 0);
+    if (shmid_start != -1) {
+        shmctl(shmid_start, IPC_RMID, 0);
+    }
 }
 
 // int main() {

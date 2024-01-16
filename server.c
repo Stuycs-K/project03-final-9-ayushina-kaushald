@@ -126,7 +126,10 @@ int main(){
 
     file_setup();
 
-    int game_started = 0;
+    int shmid_start = shmget(STARTSHM_KEY, sizeof(int), IPC_CREAT | 0666);
+    int *game_started = shmat(shmid_start, 0, 0);
+    *game_started = 0;
+    shmdt(game_started);
 
     char *letter = generateLetter();
     printf("The letter of this game is: %s\n", letter);
@@ -259,6 +262,10 @@ int main(){
         if (FD_ISSET(listen_socket, &read_fds)) {
             //accept the connection
             int client_socket = accept(listen_socket,(struct sockaddr *)&client_address, &sock_size);
+
+            int plr_num = client_socket - PLR_OFFSET;
+            write(client_socket, &plr_num, sizeof(int));
+
             if (send(client_socket, letter, sizeof(char), 0) < 0) {
                 perror("Server send error");
                 exit(EXIT_FAILURE);
@@ -289,10 +296,13 @@ int main(){
                 // players++;
                 printf("Player %d has joined the game(%d current players)\n", client_socket - PLR_OFFSET, player_queue->size);
 
-                if (game_started == 0) {
+                int shmid_start = shmget(STARTSHM_KEY, sizeof(int), IPC_CREAT | 0666);
+                int *game_started = shmat(shmid_start, 0, 0);
+
+                if (*game_started == 0) {
                     if (player_queue->size >= MIN_PLAYERS) {
                         set_timer(5);
-                        game_started = 1;
+                        *game_started = 1;
                         printf("Game starting!\n");
                         printf("Player %d's turn(%d remaining players)\n", get_front(player_queue) - PLR_OFFSET, player_queue->size);
                     }
@@ -303,6 +313,8 @@ int main(){
                 else {
                     printf("Player %d's turn(%d remaining players)\n", get_front(player_queue) - PLR_OFFSET, player_queue->size);
                 }
+
+                shmdt(game_started);
 
                 serialize(player_queue, data);
                 shmdt(data);
@@ -347,14 +359,21 @@ int main(){
                         exit(0);
                     }
 
+                    int shmid_start = shmget(STARTSHM_KEY, sizeof(int), IPC_CREAT | 0666);
+                    int *game_started = shmat(shmid_start, 0, 0);
+
                     int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
                     int *data = shmat(shmid, 0, 0); //attach
                     struct queue *plr_queue = deserialize(data);
-                    debug_print(plr_queue);
+                    // debug_print(plr_queue);
 
                     //print_queue(plr_queue);
                     // printf("CLIENT: %d\n", client_socket);
-                    if (get_front(plr_queue) == client_socket) {
+                    if (*game_started == 0) {
+                        char msg[BUFFER_SIZE] = "Game has not started";
+                        write(client_socket, msg, BUFFER_SIZE);
+                    }
+                    else if (get_front(plr_queue) == client_socket) {
                         // reset_timer();
                         // set_timer(5);
                         dequeue(plr_queue);
@@ -366,7 +385,7 @@ int main(){
                             buff[strlen(buff)]=0;
                         }
                         printf("\nPlayer %d answered '%s'\n", client_socket - PLR_OFFSET, buff);
-                        debug_print(plr_queue);
+                        // debug_print(plr_queue);
 
                         add_word(buff); //add word to file
 
@@ -376,6 +395,8 @@ int main(){
                         char msg[BUFFER_SIZE] = "Not your turn";
                         write(client_socket, msg, BUFFER_SIZE);
                     }
+
+                    shmdt(game_started);
 
                     serialize(plr_queue, data);
                     shmdt(data);

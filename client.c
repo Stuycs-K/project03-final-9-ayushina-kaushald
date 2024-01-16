@@ -26,6 +26,10 @@ int main() {
 
     printf("Welcome to Word Bomb!\n");
 
+    int plr_num;
+    read(client_socket, &plr_num, sizeof(int));
+    printf("You are player %d.\n", plr_num);
+
     char received_letter;
     if (recv(client_socket, &received_letter, sizeof(received_letter), 0) < 0) {
         perror("Client receive error");
@@ -79,7 +83,7 @@ int main() {
                 break;
             }
             buff[bytes_received] = '\0';
-            printf("Received from server: '%s'\n", buff);
+            printf("[SERVER] '%s'\n", buff);
         }
     }
 

@@ -18,6 +18,7 @@
 #define BUFFER_SIZE 1024
 #define SHM_KEY 0xdeadbeef
 #define SIGSHM_KEY 0xbeefdead
+#define STARTSHM_KEY 0xbeefbeef
 char *generateLetter();
 int checkWord(char *word, char letter);
 void file_setup();
