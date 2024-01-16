@@ -16,6 +16,8 @@
 #include "queue.h"
 #include "words.h"
 
+#define TIME_LIMIT 10
+
 int child_processes[MAX_CAPACITY + 10];
 int no_processes = 0;
 
@@ -202,8 +204,8 @@ int main(){
                 // enqueue(plr_queue, skipped_client);
 
                 if (plr_queue->size == 1) {
-                    printf("Eliminated %d.\n", skipped_client - PLR_OFFSET);
-                    printf("Game over. The winner is player %d\n", get_front(plr_queue) - PLR_OFFSET);
+                    printf("Eliminated player %d.\n", skipped_client - PLR_OFFSET);
+                    printf("\nGame over. The winner is player %d\n", get_front(plr_queue) - PLR_OFFSET);
                     serialize(plr_queue, data);
                     shmdt(data);
 
@@ -211,7 +213,7 @@ int main(){
                     exit(0);
                 }
 
-                printf("Eliminated %d. Player %d goes next (%d remaining players).\n", skipped_client - PLR_OFFSET, get_front(plr_queue) - PLR_OFFSET, plr_queue->size);
+                printf("Eliminated player %d.\n\nPlayer %d goes next (%d remaining players).\n", skipped_client - PLR_OFFSET, get_front(plr_queue) - PLR_OFFSET, plr_queue->size);
 
                 // char *buff = malloc(BUFFER_SIZE);
                 // strcpy(buff, "Your time ran out.");
@@ -310,17 +312,17 @@ int main(){
 
                 if (*game_started == 0) {
                     if (player_queue->size >= MIN_PLAYERS) {
-                        set_timer(5);
+                        set_timer(TIME_LIMIT);
                         *game_started = 1;
-                        printf("Game starting!\n");
-                        printf("Player %d's turn(%d remaining players)\n", get_front(player_queue) - PLR_OFFSET, player_queue->size);
+                        printf("Game starting! You will have %d seconds to enter a valid word.\n", TIME_LIMIT);
+                        printf("\nPlayer %d's turn(%d remaining players)\n", get_front(player_queue) - PLR_OFFSET, player_queue->size);
                     }
                     else {
                         printf("Waiting on %d more players\n", MIN_PLAYERS - player_queue->size);
                     }
                 }
                 else {
-                    printf("Player %d's turn(%d remaining players)\n", get_front(player_queue) - PLR_OFFSET, player_queue->size);
+                    printf("\nPlayer %d's turn(%d remaining players)\n", get_front(player_queue) - PLR_OFFSET, player_queue->size);
                 }
 
                 shmdt(game_started);
@@ -347,14 +349,16 @@ int main(){
                         int front = get_front(plr_queue);
                         remove_plr(plr_queue, client_socket); //remove player from the game
 
-                        if (front == client_socket && plr_queue->size > 0) {
+                        if (front == client_socket) {
                             //if it was their turn move to next player
-                            printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue) - PLR_OFFSET, plr_queue->size);
+                            if (plr_queue->size > 1) {
+                                printf("\nPlayer %d's turn(%d remaining players)\n", get_front(plr_queue) - PLR_OFFSET, plr_queue->size);
+                            }
                             reset_timer();
                         }
 
                         if (plr_queue->size == 1) {
-                            printf("Game over. The winner is player %d\n", get_front(plr_queue) - PLR_OFFSET);
+                            printf("\nGame over. The winner is player %d\n", get_front(plr_queue) - PLR_OFFSET);
                             serialize(plr_queue, data);
                             shmdt(data);
                             kill(sigf, SIGINT); //kill timer
@@ -393,12 +397,12 @@ int main(){
                             //clear windows line ending
                             buff[strlen(buff)]=0;
                         }
-                        printf("\nPlayer %d answered '%s'\n", client_socket - PLR_OFFSET, buff);
+                        printf("Player %d answered '%s'\n", client_socket - PLR_OFFSET, buff);
                         // debug_print(plr_queue);
 
                         add_word(buff); //add word to file
 
-                        printf("Player %d's turn(%d remaining players)\n", get_front(plr_queue) - PLR_OFFSET, plr_queue->size);
+                        printf("\nPlayer %d's turn(%d remaining players)\n", get_front(plr_queue) - PLR_OFFSET, plr_queue->size);
                         reset_timer();
                     } else {
                         char msg[BUFFER_SIZE] = "Not your turn";
