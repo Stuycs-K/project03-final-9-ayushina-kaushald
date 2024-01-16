@@ -59,7 +59,7 @@ Finalized project design with Arslan in class(10 minutes)
 Copied server demo code with the select function and learned how to utilize its features(20 minutes)
 Used the server demo code to create the client side. it is not completed and i need to figure out some things(30 minutes)
 
-### 2024-01-05 - Brief description
+### 2024-01-05 - 2024-01-07 - Brief description
 Continued to work on client/server communications, unable to get it working(1 hour)
 
 ### 2024-01-08 - Brief description
@@ -73,3 +73,12 @@ Continued more game logic methods including dealing with the queue of players(30
 ### 2024-01-10 - Brief description
 Created a playersList arry and player counter in the server to handle multiple players(30 min)
 Condensed game.c and words.c into one file, wrote the wordValid method to check if inputted word is acceptable(30 min)
+
+### 2024-01-11 - Brief description
+Tried to debug the way the queue works in class with Arslan(30 min)
+Added else statements and more game logic to notify users when it is their turn or not their turn(30 min)
+
+### 2024-01-12 - 2024-01-15 - Brief description
+Learned how to use the setitimer function and added SIGALRM to sighandler to control turn timers(30 min)
+Added timer methods and flags so that the server can individually control the timer for each client(30 min)
+Used the methods in word.c in server.c and client.c to generate a random letter and check if the inputted word is valid(30 min)
