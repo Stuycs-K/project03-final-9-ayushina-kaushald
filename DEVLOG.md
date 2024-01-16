@@ -14,7 +14,7 @@ Worked with Dean in class on the server/client code (20 mins)
 Wrote function to give server random letter (10 mins)
 Added words.c and functions to write words to a file and check if a word is in file (30 mins)
 
-### 2024-01-05 - Brief description
+### 2024-01-05 + Weekend - Brief description
 Added makefile for server/client
 Tested server/client, fixed reading socket cutting off last character and loop (30 mins)
 Added queue.c and .h to start implementing queue for the players (15 min)
@@ -40,8 +40,11 @@ Changed the buffer size of read/write but there is an issue (15 mins)
 Fixed read/write buffer size bug (10 mins)
 Tried to fix issue getting shared memory, added debug print function (20 mins)
 
-### 2024-01-12 - Brief description
+### 2024-01-12 + Weekend - Brief description
 Fixed shared memory and queue on the server so it only reads from the client when it is their turn (30 mins)
+Added on to the timer code (had to move the SIGALRM handler into its own forked process because the sigalrm breaks select) (30 mins)
+Finished the remove player from queue method, for when player disconnects or player runs out of time (30 mins)
+Extra: server prints queue when you type "show" in the terminal (20 mins)
 
 
 ## Dean Kaushal
