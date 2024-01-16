@@ -31,7 +31,7 @@ int main() {
         perror("Client receive error");
         exit(EXIT_FAILURE);
     }
-    printf("Received random letter from server: %c\n", received_letter);
+    printf("The letter of the game is: %c\n", received_letter);
 
     fd_set read_fds;
 
