@@ -8,14 +8,22 @@
 #include <string.h>
 #include "words.h"
 
-int main() {
+int main(int argc, char *argv[]) {
     struct addrinfo *hints, *results;
     hints = calloc(1, sizeof(struct addrinfo));
     char *PORT = "9998";
 
+    char ip_address[50];
+    if (argc == 2) {
+        strcpy(ip_address, argv[1]);
+    }
+    else {
+        strcpy(ip_address, "127.0.0.1");
+    }
+
     hints->ai_family = AF_INET;
     hints->ai_socktype = SOCK_STREAM;
-    getaddrinfo("127.0.0.1", PORT, hints, &results);
+    getaddrinfo(ip_address, PORT, hints, &results);
 
     int client_socket = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
 
