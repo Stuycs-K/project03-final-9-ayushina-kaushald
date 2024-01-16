@@ -112,7 +112,7 @@ void print_queue(struct queue *q) {
     printf("[");
     for (int i = 0; i < q->size; i++) {
         int index = (q->front + i) % q->capacity;
-        printf(" %d ", q->arr[index]);
+        printf(" %d ", q->arr[index] - PLR_OFFSET);
     }
     printf("]\n");
 }

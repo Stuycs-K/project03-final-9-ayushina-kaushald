@@ -16,9 +16,6 @@
 #include "queue.h"
 #include "words.h"
 
-#define MIN_PLAYERS 3
-#define PLR_OFFSET 4
-
 int child_processes[MAX_CAPACITY + 10];
 int no_processes = 0;
 
@@ -256,6 +253,18 @@ int main(){
             buff[strlen(buff)]=0;
             buff = strsep(&buff, "\n");
             // printf("Recieved from terminal: '%s'\n",buff);
+            if (strcmp(buff, "show") == 0) {
+                int shmid = shmget(SHM_KEY, sizeof(struct queue), 0);
+                int *data = shmat(shmid, 0, 0); //attach
+                struct queue *plr_queue = deserialize(data);
+                
+                printf("\nPlayers in queue:\n");
+                print_queue(plr_queue);
+                printf("\n");
+                
+                serialize(plr_queue, data);
+                shmdt(data);
+            }
         }
 
         // if socket

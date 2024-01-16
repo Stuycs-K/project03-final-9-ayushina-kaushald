@@ -1,11 +1,12 @@
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <sys/stat.h>
 #include <netdb.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <errno.h>
 #include <stdlib.h>
-#include <string.h>
 #include "words.h"
 
 int main(int argc, char *argv[]) {
@@ -13,17 +14,14 @@ int main(int argc, char *argv[]) {
     hints = calloc(1, sizeof(struct addrinfo));
     char *PORT = "9998";
 
-    char ip_address[50];
-    if (argc == 2) {
-        strcpy(ip_address, argv[1]);
+    char* IP = "127.0.0.1";
+    if(argc == 2) {
+        IP = argv[1];
+        printf("Connecting to %s\n", IP);
     }
-    else {
-        strcpy(ip_address, "127.0.0.1");
-    }
-
     hints->ai_family = AF_INET;
     hints->ai_socktype = SOCK_STREAM;
-    getaddrinfo(ip_address, PORT, hints, &results);
+    getaddrinfo(IP, PORT, hints, &results);
 
     int client_socket = socket(results->ai_family, results->ai_socktype, results->ai_protocol);
 

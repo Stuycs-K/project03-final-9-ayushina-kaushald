@@ -5,6 +5,10 @@
 #define QUEUE_H
 #define MAX_CAPACITY 20
 #define SHM_SIZE ((MAX_CAPACITY + 4) * sizeof(int))
+
+#define MIN_PLAYERS 3
+#define PLR_OFFSET 4
+
 struct queue {
     int front, back, size, capacity;
     int *arr;
